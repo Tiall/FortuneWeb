@@ -5,9 +5,11 @@ var contentBox = document.getElementById("contentBox");
 window.addEventListener("load", loadTarotJson());
 
 async function loadTarotJson() {
-    const response = await fetch('./tarotMeanings.json');
-    const tarotJson = await response.json();
-    tarotCardSuits = tarotJson;
+    if (tarotCardSuits == null) {
+        const response = await fetch('./tarotMeanings.json');
+        const tarotJson = await response.json();
+        tarotCardSuits = tarotJson;
+    }
     loadTarot();
 }
 
