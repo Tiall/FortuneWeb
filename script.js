@@ -12,6 +12,9 @@ async function loadTarotJson() {
 }
 
 function loadTarot() {
+    if (contentBox == null) {
+        contentBox = document.getElementById("contentBox");
+    }
     try{
         contentBox.innerHTML = JSON.stringify(tarotCardSuits[0].cards[0]);
     }
