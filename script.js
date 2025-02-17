@@ -24,7 +24,16 @@ function loadTarot() {
 
     // Attempt to load tarot card JSON data
     try{
+        let randCard = tarotCardSuits[Math.floor(Math.random() * (tarotCardSuits.length + 1))].cards[Math.floor(Math.random() * (tarotCardSuits.cards.length + 1))]
         contentBox.innerHTML = JSON.stringify(tarotCardSuits[0].cards[0]);
+        let cardNumBox = document.getElementsByClassName("tarotCard")[0].getElementsByClassName("cardNum")[0];
+        let cardDescBox = document.getElementsByClassName("tarotCard")[0].getElementsByClassName("cardDesc")[0];
+        let cardNameBox = document.getElementsByClassName("tarotCard")[0].getElementsByClassName("cardName")[0];
+
+        cardNumBox.innerHTML = randCard.number;
+        cardDescBox.innerHTML = (Math.random() > 0.5) ? randCard.upright : randCard.reversed;
+        cardNameBox.innerHTML = randCard.name;
+        
     }
     catch {
         contentBox.innerHTML = "ERROR TarotCardsJSON not loaded!";
