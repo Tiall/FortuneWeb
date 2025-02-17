@@ -16,6 +16,7 @@ function loadTarot() {
         contentBox.innerHTML = JSON.stringify(tarotCardSuits[0].cards[0]);
     }
     else {
+        contentBox.innerHTML = "ERROR TarotCardsJSON not loaded!";
         print("ERROR TarotCardsJSON not loaded!");
     }
     
