@@ -12,7 +12,7 @@ async function loadTarotJson() {
 }
 
 function loadTarot() {
-    if (tarotCardSuits != null) {
+    if (tarotCardSuits[0] != null) {
         contentBox.innerHTML = JSON.stringify(tarotCardSuits[0].cards[0]);
     }
     else {
