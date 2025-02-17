@@ -12,10 +12,10 @@ async function loadTarotJson() {
 }
 
 function loadTarot() {
-    if (tarotCardSuits[0] != null) {
+    try{
         contentBox.innerHTML = JSON.stringify(tarotCardSuits[0].cards[0]);
     }
-    else {
+    catch {
         contentBox.innerHTML = "ERROR TarotCardsJSON not loaded!";
         print("ERROR TarotCardsJSON not loaded!");
     }
