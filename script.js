@@ -1,6 +1,6 @@
 var tarotCardSuits;
 
-let contentBox = document.getElementById("contentBox");
+var contentBox = document.getElementById("contentBox");
 
 window.addEventListener("load", loadTarotJson());
 
