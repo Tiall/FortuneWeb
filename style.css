@@ -1,0 +1,19 @@
+.tarotCard {
+    background-color: #5f543b;
+    width: 275px;
+    height: 475px;
+    border: solid black 4px;
+}
+.tarotCard .cardNum{
+    text-align: center;
+}
+.tarotCard .cardDesc{
+    height: calc(475px - (40px + 6rem));
+}
+.tarotCard .cardName{
+    margin: 0;
+    padding: 12.5px;
+    text-align: center;
+    background-color: #ffffff30;
+    border-top: solid black 2px;
+}
