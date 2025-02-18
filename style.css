@@ -9,6 +9,7 @@
 }
 .tarotCard .cardDesc{
     height: calc(475px - (40px + 6rem));
+    padding-inline: 20px;
 }
 .tarotCard .cardName{
     margin: 0;
