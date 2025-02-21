@@ -1,6 +1,9 @@
+// The promise loaded from the TarotMeanings JSON
 var tarotCardSuits;
 
+// Opening a database call request
 var openRequest = indexedDB.open("cardStorage", 1);
+// The db we get from the call request
 var db;
 
 openRequest.onupgradeneeded = function () {
