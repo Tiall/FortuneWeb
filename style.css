@@ -3,6 +3,10 @@
     width: 275px;
     height: 475px;
     border: solid black 4px;
+
+    float: left;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
 }
 .tarotCard .cardNum{
     text-align: center;
