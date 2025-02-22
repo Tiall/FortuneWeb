@@ -22,3 +22,27 @@
     background-color: #ffffff30;
     border-top: solid black 2px;
 }
+
+h1 {
+    --main: white;
+    --bit: #5b4b9f;
+    background-image: linear-gradient(to right, var(--main) 35%, var(--bit) 40%,var(--bit) 60%, var(--main) 65%);
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 1px;
+    -webkit-text-stroke-color: black;
+    background-size: 280% 100%;
+    animation: mystic 10s linear infinite;
+}
+
+
+@keyframes mystic {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: 100% 0;
+    }
+}
