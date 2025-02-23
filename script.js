@@ -298,6 +298,11 @@ function onGenerateTarot() {
 }
 
 function flipCard(element) {
+    if (document.querySelectorAll('.tarotCard').length > 0) {
+        saveCardPositions();
+
+    }
+
     let clickedCardID = element.getAttribute("card-id");
     console.log("ID:", clickedCardID);
 
@@ -439,6 +444,11 @@ async function fixNewRenderedCards() {
 }
 
 async function renderTarotCards() {
+    if (document.querySelectorAll('.tarotCard').length > 0) {
+        saveCardPositions();
+
+    }
+
     removeRenderedCards();
     let cards = await getAllCardsInDB();
     console.log("Cards ",cards);
