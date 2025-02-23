@@ -159,6 +159,44 @@ function getAllCardsInDB() {
     })
 }
 
+function getStoredPositionInDB(key) {
+    return new Promise(function (resolve, reject) {
+        let transaction = db.transaction("cards", "readonly"); // (1)
+
+        // get an object store to operate on it
+        let dbStore = transaction.objectStore("cards"); // (2)
+
+        let cursorRequest = dbStore.openCursor(); // (3)
+
+        //request.onsuccess = (event) => { // (4)
+        //    console.log("Retrieved cards from the store", event.target.result);
+        //    resolve(event.target.result);
+        //};
+        cursorRequest.onsuccess = function (event) {
+            let cursor = event.target.result;
+
+            if (cursor) {
+                if (cursor.key == key) {
+                    resolve({
+                        x: cursor.value.xPosition,
+                        y: cursor.value.yPosition
+                    });
+                }
+                
+                // Move to the next record
+                cursor.continue();
+
+            }
+            
+        };
+
+        cursorRequest.onerror = function (event) {
+            console.log("Error", cursorRequest.error);
+            reject(event)
+        };
+    })
+}
+
 var contentBox = document.getElementById("contentBox");
 window.addEventListener("load", loadTarotJson());
 
@@ -225,12 +263,6 @@ function flipCard(element) {
 
     let cursorRequest = cards.openCursor(); // (3)
 
-    //request.onsuccess = (event) => { // (4)
-    //    console.log("Retrieved cards from the store", event.target.result);
-    //    resolve(event.target.result);
-    //};
-
-    var result = {};
     cursorRequest.onsuccess = function (event) {
         let cursor = event.target.result;
 
@@ -297,10 +329,10 @@ function drawCard(card, key) {
         cardNameBox.style.display = 'none';
 
     }
-    
+
     clon.querySelector(".tarotCard").setAttribute('card-id', key);
+    clon.querySelector(".tarotCard").style.visibility = 'hidden';
     document.getElementById("playMat").appendChild(clon);
-    
 }
 
 function removeRenderedCards() {
@@ -309,6 +341,28 @@ function removeRenderedCards() {
     cards.forEach(card => {
         card.remove();
     });
+}
+
+async function fixNewRenderedCards() {
+    let cards = document.querySelectorAll('.tarotCard');
+
+    for (let i = cards.length-1; i >= 0; i--) {
+        let card = cards[i];
+
+        if (card.style.position != 'absolute') {
+            let cardRect = card.getBoundingClientRect();
+            card.style.position = 'absolute';
+
+            let cardPos = await getStoredPositionInDB(card.getAttribute("card-id"));
+
+            card.style.left = ((cardPos.x == -1) ? cardRect.left : cardPos.x);
+            card.style.top = ((cardPos.y == -1) ? cardRect.top : cardPos.y);
+        }
+
+        fixShadowDir(card, document.getElementById("playMat"));
+        card.style.visibility = 'visible';
+    }
+    
 }
 
 async function renderTarotCards() {
@@ -327,7 +381,55 @@ async function renderTarotCards() {
         console.log("Rendered card: ", cards[key].name);
     }
 
+    fixNewRenderedCards();
+
     console.log("RENDERING of " + cards.length + " TAROT CARDS COMPLETED.");
+}
+
+function saveCardPositions() {
+    let transaction = db.transaction("cards", "readwrite"); // (1)
+
+    // get an object store to operate on it
+    let cards = transaction.objectStore("cards"); // (2)
+
+    let cursorRequest = cards.openCursor(); // (3)
+
+    var onScreenCards = document.querySelectorAll('.tarotCard');
+    cursorRequest.onsuccess = function (event) {
+        let cursor = event.target.result;
+
+        if (cursor) {
+            for (let i = 0; i < onScreenCards.length; i++) {
+                let card = onScreenCards[i];
+                if (card.getAttribute("card-id") == cursor.key) {
+                    console.log("Retrieved cards from the store", cursor.value);
+
+                    if (card.style.position == 'absolute') {
+                        // Create a request to update
+                        cursor.value.xPosition = card.style.left;
+                        cursor.value.yPosition = card.style.top;
+                        const updateRequest = cursor.update(cursor.value);
+
+                        updateRequest.onsuccess = () => {
+                            console.log("Card Position Updated ", updateRequest.result);
+                        }
+                        updateRequest.onerror = function () {
+                            console.log("Error", updateRequest.error);
+                        };
+                    }
+                    break;
+                }
+            }
+
+            // Move to the next record
+            cursor.continue();
+        }
+
+    };
+
+    cursorRequest.onerror = function (event) {
+        console.log("Error", cursorRequest.error);
+    };
 }
 
 
@@ -349,19 +451,34 @@ onDragStart = function (ev) {
     ev.dataTransfer.setData("text/plain", ""); // Required for Firefox
 };
 
+function fixShadowDir(draggedElement, playmat) {
+    const lightSourceRect = playmat.getBoundingClientRect();
+    const lightSourcePos = {
+        x: (lightSourceRect.left + lightSourceRect.right) / 2,
+        y: (lightSourceRect.top + lightSourceRect.bottom) / 2
+    }
+
+    const draggedElementRect = draggedElement.getBoundingClientRect();
+    const draggedElementPos = {
+        x: (draggedElementRect.left + draggedElementRect.right) / 2,
+        y: (draggedElementRect.top + draggedElementRect.bottom) / 2
+    }
+    //console.log("X: ", (draggedElementPos.x - lightSourcePos.x) / 10, " Y: ", (draggedElementPos.y - lightSourcePos.y) / 10);
+    draggedElement.style.boxShadow = (draggedElementPos.x - lightSourcePos.x) / 10 + 'px ' + (draggedElementPos.y - lightSourcePos.y) / 10 + 'px 10px -10px #000000';
+}
+
 drop_handler = function (ev) {
     ev.preventDefault();
 
-    const playmat = document.getElementById("playMat");
-
-    const left = parseInt(playmat.style.left);
-    const top = parseInt(playmat.style.top);
-
-    
+    const playmat = document.getElementById("playMat");    
 
     draggedElement.style.position = 'absolute';
     draggedElement.style.left = ev.clientX - offsetX + 'px';
     draggedElement.style.top = ev.clientY - offsetY + 'px';
+
+    fixShadowDir(draggedElement, playmat);
+
+    //draggedElement.style.boxShadow = '10px 10px 10px #000000';
     playmat.appendChild(draggedElement);
 };
 
@@ -369,3 +486,14 @@ dragover_handler = function (ev) {
     ev.preventDefault();
     ev.dataTransfer.dropEffect = "move";
 };
+
+window.addEventListener('beforeunload', function (ev) {
+    // Your code to run before the page unloads
+    if (document.querySelectorAll('.tarotCard').length > 0) {
+        saveCardPositions();
+        ev.preventDefault();
+    }
+    
+
+
+});

@@ -1,3 +1,9 @@
+body {
+    background-color: black;
+
+    color: white;
+}
+
 .tarotCard {
     background-color: #5f543b;
     width: calc(275px / 1.2);
@@ -6,8 +12,7 @@
     float: left;
     margin-right: 1rem;
     margin-bottom: 1rem;
-
-    filter: drop-shadow(10px 10px)
+/*    box-shadow: 10px 10px 0px #000000;*/
 }
 .tarotCard .cardNum{
     text-align: center;
@@ -31,8 +36,8 @@ h1 {
     -webkit-background-clip: text;
     color: transparent;
     -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: 1px;
-    -webkit-text-stroke-color: black;
+    -webkit-text-stroke: 0.5px;
+    -webkit-text-stroke-color: white;
     background-size: 280% 100%;
     animation: mystic 10s linear infinite;
 }
@@ -52,5 +57,5 @@ h1 {
     min-height: calc(100vh - 175px);
     margin-inline: 10px;
     border: solid black 1px;
-    background-image: radial-gradient(circle at center, #5b4b9f 0,  black 100%);
+    background-image: radial-gradient(circle at center, #5b4b9f 0, black 100%);
 }
