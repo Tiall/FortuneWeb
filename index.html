@@ -12,17 +12,20 @@
       <h1>Generic Fortune Teller Website</h1>
       <button type="button" onclick="onGenerateTarot()">Generate Tarot</button>
       <button type="button" onclick="renderTarotCards()">Render Tarot</button>
+      <button type="button" onclick="removeOldCards()">Delete Tarot</button>
       <p id="contentBox">
           Generate some tarot cards to get started with your session!
       </p>
       <template>
-          <div class="tarotCard" draggable="true">
+          <div class="tarotCard" draggable="true" ondragstart="onDragStart(event)">
               <h2 class="cardNum">Number</h2>
               <p class="cardDesc">Description</p>
               <h2 class="cardName">Name</h2>
           </div>
       </template>
+      <div id="playMat" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">
 
+      </div>
 
   </body>
 </html>

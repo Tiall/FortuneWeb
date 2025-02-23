@@ -36,6 +36,50 @@ function storeCardInDB(card, dbStore) {
     };
 }
 
+function removeOldCards() {
+    let transaction = db.transaction("cards", "readwrite"); // (1)
+
+    // get an object store to operate on it
+    let dbStore = transaction.objectStore("cards"); // (2)
+
+    let cursorRequest = dbStore.openCursor();
+
+    let replacedCount = 0;
+    cursorRequest.onsuccess = function (event) {
+        let cursor = event.target.result;
+        
+        if (cursor) {
+            if (!('eTag' in cursor.value) || cursor.value.eTag != dbETagKey) {
+                // Replace the out of data card with a new random card. I COULD CHANGE THIS IN THE FUTURE POTENTIALLY... ??? ???? ?????
+                const updateRequest = cursor.update(generateCard());
+                replacedCount++;
+
+                updateRequest.onsuccess = function () {
+                    console.log('Record replaced successfully.');
+                };
+
+                updateRequest.onerror = function () {
+                    console.error('Error replacing record.');
+                };
+            }
+
+            // Move to the next record
+            cursor.continue();
+            
+        }
+        else {
+            console.log("Replaced card count: ", replacedCount);
+        }
+    };
+
+    cursorRequest.onerror = function (event) {
+        console.log("Error", request.error);
+        reject(event)
+    };
+}
+
+
+const dbETagKey = 1; // This key is compared to the version number of the card on load so that we can replace/remove old cards
 function generateCards(amt) {
     let transaction = db.transaction("cards", "readwrite"); // (1)
 
@@ -44,13 +88,38 @@ function generateCards(amt) {
 
     //let randCards = [];
     for (let i = 0; i < amt; i++) {
-        //randCards.push(generateTarotCardNums());
-        console.log(generateTarotCard());
-        storeCardInDB(generateTarotCard(), cards);
+        //randCards.push(generateCardDataNums());
+        
+
+        let fullCardObj = generateCard();
+        console.log(fullCardObj);
+
+        storeCardInDB(fullCardObj, cards);
     }
 }
+function generateCard() {
+    let generatedCard = generateCardData();
+    let fullCardObj = {
+        number: generatedCard.number,
+        name: generatedCard.name,
 
-function getAllCardInDB() {
+        // isReversed can be used to determine if we should flip the image on the card and it is used for the proceeding meaning
+        isReversed: Math.random() > 0.5,
+        meaning: (this.isReversed ? generatedCard.upright : generatedCard.reversed),
+
+        // Has the card been flipped over yet?
+        isFlipped: false,
+
+        // Position of card on screen
+        xPosition: -1,
+        yPosition: -1,
+
+        eTag: dbETagKey
+    }
+    return fullCardObj;
+}
+
+function getAllCardsInDB() {
     return new Promise(function (resolve, reject) {
         let transaction = db.transaction("cards", "readonly"); // (1)
 
@@ -100,7 +169,7 @@ function getTarotCard(suit, index) {
     return tarotCardSuits[suit].cards[index];
 }
 
-function generateTarotCard() {
+function generateCardData() {
     let randSuit = Math.floor(Math.random() * (tarotCardSuits.length));
     let randCardIndex = Math.floor(Math.random() * (tarotCardSuits[randSuit].cards.length - 1));
     return getTarotCard(randSuit, randCardIndex);
@@ -114,7 +183,7 @@ function onGenerateTarot() {
         contentBox = document.getElementById("contentBox");
     }
 
-    let initRandCard = generateTarotCard();
+    let initRandCard = generateCardData();
     //console.log(JSON.stringify(initRandCard));
 
     // Set textbox to raw JSON data of the randomly drawn tarot card
@@ -137,7 +206,7 @@ function drawCard(card) {
 
     // Set the tarot card graphic's textboxes with the data from the randomly drawn tarot card
     cardNumBox.innerHTML = card.number;
-    cardDescBox.innerHTML = (Math.random() > 0.5) ? card.upright : card.reversed;
+    cardDescBox.innerHTML = card.meaning;
     cardNameBox.innerHTML = card.name;
 
     document.body.appendChild(clon);
@@ -153,7 +222,7 @@ function removeRenderedCards() {
 
 async function renderTarotCards() {
     removeRenderedCards();
-    let cards = await getAllCardInDB();
+    let cards = await getAllCardsInDB();
     console.log("Cards ",cards.length);
 
     if (cards == null) {
@@ -173,3 +242,39 @@ async function renderTarotCards() {
 
 
 
+// CARD DROPPAGE LOGIC ============================================================================================================================================================
+
+let draggedElement = null;
+let offsetX;
+let offsetY;
+
+onDragStart = function (ev) {
+    const rect = ev.target.getBoundingClientRect();
+
+    offsetX = ev.clientX - rect.x;
+    offsetY = ev.clientY - rect.y;
+
+    draggedElement = ev.target;
+    ev.dataTransfer.setData("text/plain", ""); // Required for Firefox
+};
+
+drop_handler = function (ev) {
+    ev.preventDefault();
+
+    const playmat = document.getElementById("playMat");
+
+    const left = parseInt(playmat.style.left);
+    const top = parseInt(playmat.style.top);
+
+    
+
+    draggedElement.style.position = 'absolute';
+    draggedElement.style.left = ev.clientX - offsetX + 'px';
+    draggedElement.style.top = ev.clientY - offsetY + 'px';
+    playmat.appendChild(draggedElement);
+};
+
+dragover_handler = function (ev) {
+    ev.preventDefault();
+    ev.dataTransfer.dropEffect = "move";
+};

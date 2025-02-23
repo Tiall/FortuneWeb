@@ -1,9 +1,8 @@
 .tarotCard {
     background-color: #5f543b;
-    width: 275px;
-    height: 475px;
+    width: calc(275px / 1.2);
+    height: calc(475px / 1.2);
     border: solid black 4px;
-
     float: left;
     margin-right: 1rem;
     margin-bottom: 1rem;
@@ -12,7 +11,7 @@
     text-align: center;
 }
 .tarotCard .cardDesc{
-    height: calc(475px - (40px + 6rem));
+    height: calc(475px / 1.2 - (40px + 6rem));
     padding-inline: 20px;
 }
 .tarotCard .cardName{
@@ -35,8 +34,6 @@ h1 {
     background-size: 280% 100%;
     animation: mystic 10s linear infinite;
 }
-
-
 @keyframes mystic {
     0% {
         background-position: 0 0;
@@ -45,4 +42,12 @@ h1 {
     100% {
         background-position: 100% 0;
     }
+}
+
+#playMat {
+    width: calc(100% - 22px);
+    height: 100%;
+    min-height: 1000px;
+    margin-inline: 10px;
+    border: solid black 1px;
 }
