@@ -21,6 +21,7 @@ openRequest.onerror = function () {
 
 openRequest.onsuccess = function () {
     db = openRequest.result;
+    repairOldCards();
     // continue working with database using db object
 };
 
@@ -36,7 +37,7 @@ function storeCardInDB(card, dbStore) {
     };
 }
 
-function removeOldCards() {
+function repairOldCards() {
     let transaction = db.transaction("cards", "readwrite"); // (1)
 
     // get an object store to operate on it
@@ -209,7 +210,7 @@ function drawCard(card) {
     cardDescBox.innerHTML = card.meaning;
     cardNameBox.innerHTML = card.name;
 
-    document.body.appendChild(clon);
+    document.getElementById("playMat").appendChild(clon);
 }
 
 function removeRenderedCards() {
