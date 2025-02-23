@@ -78,6 +78,75 @@ function repairOldCards() {
     };
 }
 
+function discardCard(event, element) {
+    event.preventDefault();
+    if (document.querySelectorAll('.tarotCard').length > 0) {
+        saveCardPositions();
+
+    }
+
+    let clickedCardID = element.getAttribute("card-id");
+    console.log("ID:", clickedCardID);
+
+    let transaction = db.transaction("cards", "readwrite"); // (1)
+
+    // get an object store to operate on it
+    let cards = transaction.objectStore("cards"); // (2)
+
+    let cursorRequest = cards.openCursor(); // (3)
+
+    cursorRequest.onsuccess = async function (event) {
+        let cursor = event.target.result;
+
+        if (cursor) {
+            if (cursor.key == clickedCardID) {
+                console.log("Retrieved cards from the store", cursor.value);
+
+                const updateRequest = cursor.delete();
+
+                updateRequest.onsuccess = () => {
+                    console.log("Card deleted ", updateRequest.result);
+                }
+                updateRequest.onerror = function () {
+                    console.log("Error", updateRequest.error);
+                };
+            }
+
+            // Move to the next record
+            cursor.continue();
+        }
+        else {
+            // Rerender cards if we flip one
+            renderTarotCards();
+        }
+
+        document.getElementById("cardCountBox").innerHTML = await countDBCards();
+    };
+
+    cursorRequest.onerror = function (event) {
+        console.log("Error", cursorRequest.error);
+    };
+}
+
+function countDBCards() {
+    return new Promise(function (resolve, reject) {
+        let transaction = db.transaction("cards", "readwrite"); // (1)
+
+        // get an object store to operate on it
+        let cards = transaction.objectStore("cards"); // (2)
+
+        const countRequest = cards.count();
+
+        countRequest.onsuccess = () => {
+            resolve(countRequest.result);
+        }
+        countRequest.onerror = (event) => {
+            console.log("Error", cursorRequest.error);
+            reject(event);
+        }
+    })
+}
+
 // Replaces all cards in the database with a new card, but at the position they are currently so spread layouts will stay the same
 function replaceCards() {
     if (document.querySelectorAll('.tarotCard').length > 0) {
@@ -199,7 +268,7 @@ function getAllCardsInDB() {
 
         cursorRequest.onerror = function (event) {
             console.log("Error", cursorRequest.error);
-            reject(event)
+            reject(event);
         };
     })
 }
@@ -265,6 +334,8 @@ async function loadTarotJson() {
 
     // Do the front-end loading of the data
     //renderTarotCards();
+
+    document.getElementById("cardCountBox").innerHTML = await countDBCards();
 }
 
 function getTarotCard(suit, index) {
@@ -279,7 +350,7 @@ function generateCardData() {
     //return [randSuit, randCardIndex];
 }
 
-function onGenerateTarot() {
+async function onGenerateTarot() {
     // Set contentBox if it is not assigned already
     if (contentBox == null) {
         contentBox = document.getElementById("contentBox");
@@ -294,7 +365,7 @@ function onGenerateTarot() {
 
     generateCards(1);
 
-
+    document.getElementById("cardCountBox").innerHTML = await countDBCards();
 }
 
 function flipCard(element) {
