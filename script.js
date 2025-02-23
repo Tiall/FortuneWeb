@@ -127,15 +127,33 @@ function getAllCardsInDB() {
         // get an object store to operate on it
         let dbStore = transaction.objectStore("cards"); // (2)
 
-        let request = dbStore.getAll(); // (3)
+        let cursorRequest = dbStore.openCursor(); // (3)
 
-        request.onsuccess = (event) => { // (4)
-            console.log("Retrieved cards from the store", event.target.result);
-            resolve(event.target.result);
+        //request.onsuccess = (event) => { // (4)
+        //    console.log("Retrieved cards from the store", event.target.result);
+        //    resolve(event.target.result);
+        //};
+
+        var result = {};
+        cursorRequest.onsuccess = function (event) {
+            let cursor = event.target.result;
+            
+            if (cursor) {
+                // Save object key and value in dictionary
+                result[cursor.key] = cursor.value;
+
+                // Move to the next record
+                cursor.continue();
+
+            }
+            else {
+                console.log("Retrieved cards from the store ", result);
+                resolve(result);
+            }
         };
 
-        request.onerror = function (event) {
-            console.log("Error", request.error);
+        cursorRequest.onerror = function (event) {
+            console.log("Error", cursorRequest.error);
             reject(event)
         };
     })
@@ -196,21 +214,93 @@ function onGenerateTarot() {
 
 }
 
-function drawCard(card) {
+function flipCard(element) {
+    let clickedCardID = element.getAttribute("card-id");
+    console.log("ID:", clickedCardID);
+
+    let transaction = db.transaction("cards", "readwrite"); // (1)
+
+    // get an object store to operate on it
+    let cards = transaction.objectStore("cards"); // (2)
+
+    let cursorRequest = cards.openCursor(); // (3)
+
+    //request.onsuccess = (event) => { // (4)
+    //    console.log("Retrieved cards from the store", event.target.result);
+    //    resolve(event.target.result);
+    //};
+
+    var result = {};
+    cursorRequest.onsuccess = function (event) {
+        let cursor = event.target.result;
+
+        if (cursor) {
+            if (cursor.key == clickedCardID) {
+                console.log("Retrieved cards from the store", cursor.value);
+
+                // Create a request to update
+                cursor.value.isFlipped = !cursor.value.isFlipped
+                const updateRequest = cursor.update(cursor.value);
+
+                updateRequest.onsuccess = () => {
+                    console.log("Card flipped ", updateRequest.result);
+                }
+                updateRequest.onerror = function () {
+                    console.log("Error", updateRequest.error);
+                };
+            }
+
+            // Move to the next record
+            cursor.continue();
+        }
+        else {
+            // Rerender cards if we flip one
+            renderTarotCards();
+        }
+
+        
+    };
+
+    cursorRequest.onerror = function (event) {
+        console.log("Error", cursorRequest.error);
+    };
+}
+
+function drawCard(card, key) {
     let temp = document.getElementsByTagName("template")[0];
     let clon = temp.content.cloneNode(true);
 
-    // Get the data from the randomly drawn tarot card into their respective places
+    //// Add the cards data onto the card graphic so that we can pull from the data later if needed
+    //clon.setAttribute("data-cardID", card.key);
+
+    // Get the place for the data to be placed on the card
     let cardNumBox = clon.querySelector(".cardNum");
     let cardDescBox = clon.querySelector(".cardDesc");
     let cardNameBox = clon.querySelector(".cardName");
 
-    // Set the tarot card graphic's textboxes with the data from the randomly drawn tarot card
-    cardNumBox.innerHTML = card.number;
-    cardDescBox.innerHTML = card.meaning;
-    cardNameBox.innerHTML = card.name;
+    if (card.isFlipped) {
+        // Show the text boxes
+        cardNumBox.style.display = 'block';
+        cardDescBox.style.display = 'block';
+        cardNameBox.style.display = 'block';
 
+        // Set the tarot card graphic's textboxes with the data provided
+        cardNumBox.innerHTML = card.number;
+        cardDescBox.innerHTML = card.meaning;
+        cardNameBox.innerHTML = card.name;
+    }
+    else {
+        // Do something
+        // Get the data from the randomly drawn tarot card into their respective places
+        cardNumBox.style.display = 'none';
+        cardDescBox.style.display = 'none';
+        cardNameBox.style.display = 'none';
+
+    }
+    
+    clon.querySelector(".tarotCard").setAttribute('card-id', key);
     document.getElementById("playMat").appendChild(clon);
+    
 }
 
 function removeRenderedCards() {
@@ -224,7 +314,7 @@ function removeRenderedCards() {
 async function renderTarotCards() {
     removeRenderedCards();
     let cards = await getAllCardsInDB();
-    console.log("Cards ",cards.length);
+    console.log("Cards ",cards);
 
     if (cards == null) {
         console.log("NO TAROT CARDS STORED IN MEMORY; RENDER CANCELLED.")
@@ -233,7 +323,7 @@ async function renderTarotCards() {
 
     console.log("RENDERING " + cards.length + " TAROT CARDS...");
     for (const key in cards) {
-        drawCard(cards[key]);
+        drawCard(cards[key], key);
         console.log("Rendered card: ", cards[key].name);
     }
 

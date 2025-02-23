@@ -17,7 +17,7 @@
           Generate some tarot cards to get started with your session!
       </p>
       <template>
-          <div class="tarotCard" draggable="true" ondragstart="onDragStart(event)">
+          <div class="tarotCard" draggable="true" ondragstart="onDragStart(event)" ondblclick="flipCard(this)">
               <h2 class="cardNum">Number</h2>
               <p class="cardDesc">Description</p>
               <h2 class="cardName">Name</h2>
