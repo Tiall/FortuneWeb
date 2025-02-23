@@ -27,6 +27,7 @@ body {
     text-align: center;
     background-color: #ffffff30;
     border-top: solid black 2px;
+    white-space:nowrap;
 }
 
 h1 {

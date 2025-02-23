@@ -75,7 +75,52 @@ function repairOldCards() {
 
     cursorRequest.onerror = function (event) {
         console.log("Error", request.error);
-        reject(event)
+    };
+}
+
+// Replaces all cards in the database with a new card, but at the position they are currently so spread layouts will stay the same
+function replaceCards() {
+    if (document.querySelectorAll('.tarotCard').length > 0) {
+        saveCardPositions();
+
+    }
+
+    let transaction = db.transaction("cards", "readwrite"); // (1)
+
+    // get an object store to operate on it
+    let dbStore = transaction.objectStore("cards"); // (2)
+
+    let cursorRequest = dbStore.openCursor();
+
+    cursorRequest.onsuccess = function (event) {
+        let cursor = event.target.result;
+
+        if (cursor) {
+            let newCard = generateCard();
+            newCard.xPosition = cursor.value.xPosition
+            newCard.yPosition = cursor.value.yPosition
+            const updateRequest = cursor.update(newCard);
+
+            updateRequest.onsuccess = function () {
+                console.log('Record replaced successfully.');
+            };
+
+            updateRequest.onerror = function () {
+                console.error('Error replacing record.');
+            };
+
+            // Move to the next record
+            cursor.continue();
+
+        }
+        else {
+            // Rerender cards if we replace 'em
+            renderTarotCards();
+        }
+    };
+
+    cursorRequest.onerror = function (event) {
+        console.log("Error", request.error);
     };
 }
 
@@ -298,6 +343,33 @@ function flipCard(element) {
     };
 }
 
+function shrinkText(element) {
+    let fontSize = 25; // Initial font size
+    element.style.fontSize = fontSize + 'px';
+    element.style.whiteSpace = 'nowrap'; // Prevent text wrapping
+
+    // If we are already good, we can be done
+    if (element.scrollWidth <= element.getBoundingClientRect().width) {
+        return;
+    }
+
+    while (element.scrollWidth > element.getBoundingClientRect().width) {
+        console.log("Width: ", element.scrollWidth, " Font Size: ", element.style.fontSize);
+        fontSize -= 1; // Reduce font size
+        element.style.fontSize = fontSize + 'px';
+
+        if (fontSize <= 0) {
+            console.error("Text cannot fit within the container.");
+            return;
+        }
+    }
+
+    // Remove an extra fontsize so that we are not at the edge
+    element.style.fontSize = fontSize-1 + 'px';
+
+    console.log(element.innerHTML,": ","Final Width: ", element.scrollWidth, " Font Size: ", element.width);
+}
+
 function drawCard(card, key) {
     let temp = document.getElementsByTagName("template")[0];
     let clon = temp.content.cloneNode(true);
@@ -319,7 +391,7 @@ function drawCard(card, key) {
         // Set the tarot card graphic's textboxes with the data provided
         cardNumBox.innerHTML = card.number;
         cardDescBox.innerHTML = card.meaning;
-        cardNameBox.innerHTML = card.name;
+        cardNameBox.innerHTML = card.name + (card.isReversed ? " (R)" : "");
     }
     else {
         // Do something
@@ -360,6 +432,7 @@ async function fixNewRenderedCards() {
         }
 
         fixShadowDir(card, document.getElementById("playMat"));
+        shrinkText(card.querySelector(".cardName"));
         card.style.visibility = 'visible';
     }
     
@@ -488,10 +561,10 @@ dragover_handler = function (ev) {
 };
 
 window.addEventListener('beforeunload', function (ev) {
-    // Your code to run before the page unloads
+    // If we got cards, save their positions before the page unloads
     if (document.querySelectorAll('.tarotCard').length > 0) {
         saveCardPositions();
-        ev.preventDefault();
+        
     }
     
 
