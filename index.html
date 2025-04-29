@@ -17,6 +17,12 @@
       <p id="contentBox">
           Generate some tarot cards to get started with your session!
       </p>
+      <h3>Controls:</h3>
+      <ul>
+          <li>Drag and drop cards to move them around.</li>
+          <li>Double click cards to flip them over.</li>
+          <li>Right click cards to discard them.</li>
+      </ul>
       <template>
           <div class="tarotCard" draggable="true" ondragstart="onDragStart(event)" ondblclick="flipCard(this)" oncontextmenu="discardCard(event,this)">
               <h2 class="cardNum">Number</h2>

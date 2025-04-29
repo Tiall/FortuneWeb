@@ -60,3 +60,10 @@ h1 {
     border: solid black 1px;
     background-image: radial-gradient(circle at center, #5b4b9f 0, black 100%);
 }
+
+ul {
+    margin-top: 0;
+}
+h3 {
+    margin-block: 0;
+}

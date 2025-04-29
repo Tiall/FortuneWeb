@@ -3,9 +3,11 @@ var tarotCardSuits;
 
 // Opening a database call request
 var openRequest = indexedDB.open("cardStorage", 1);
+
 // The db we get from the call request
 var db;
 
+// On invalid database load
 openRequest.onupgradeneeded = function () {
     // triggers if the client had no database
     // ...perform initialization...
@@ -15,16 +17,19 @@ openRequest.onupgradeneeded = function () {
     }
 };
 
+// On database failed connection
 openRequest.onerror = function () {
     console.error("Error", openRequest.error);
 };
 
+// On database successful connection
 openRequest.onsuccess = function () {
     db = openRequest.result;
     repairOldCards();
     // continue working with database using db object
 };
 
+// Adds the provided card to the provided database store
 function storeCardInDB(card, dbStore) {
     let request = dbStore.add(card); // (3)
 
@@ -37,6 +42,7 @@ function storeCardInDB(card, dbStore) {
     };
 }
 
+// Fixes all the database cards where the card's version "etag" is too old, replacing it with new card data
 function repairOldCards() {
     let transaction = db.transaction("cards", "readwrite"); // (1)
 
@@ -51,7 +57,7 @@ function repairOldCards() {
         
         if (cursor) {
             if (!('eTag' in cursor.value) || cursor.value.eTag != dbETagKey) {
-                // Replace the out of data card with a new random card. I COULD CHANGE THIS IN THE FUTURE POTENTIALLY... ??? ???? ?????
+                // Replace the out of data card with a new random card. THIS COULD CHANGE THIS IN THE FUTURE POTENTIALLY
                 const updateRequest = cursor.update(generateCard());
                 replacedCount++;
 
@@ -78,6 +84,7 @@ function repairOldCards() {
     };
 }
 
+// Removes a card from the board and your hand in the database
 function discardCard(event, element) {
     event.preventDefault();
     if (document.querySelectorAll('.tarotCard').length > 0) {
@@ -128,6 +135,7 @@ function discardCard(event, element) {
     };
 }
 
+// Counts how many cards are in your hand in the database
 function countDBCards() {
     return new Promise(function (resolve, reject) {
         let transaction = db.transaction("cards", "readwrite"); // (1)
@@ -147,7 +155,7 @@ function countDBCards() {
     })
 }
 
-// Replaces all cards in the database with a new card, but at the position they are currently so spread layouts will stay the same
+// Replaces all cards in the database with a new card, but at their current positions so your placed down layouts will stay the same
 function replaceCards() {
     if (document.querySelectorAll('.tarotCard').length > 0) {
         saveCardPositions();
@@ -195,6 +203,8 @@ function replaceCards() {
 
 
 const dbETagKey = 1; // This key is compared to the version number of the card on load so that we can replace/remove old cards
+
+// Generates multiple card objects and stores them in your hand in the database
 function generateCards(amt) {
     let transaction = db.transaction("cards", "readwrite"); // (1)
 
@@ -209,6 +219,7 @@ function generateCards(amt) {
         storeCardInDB(fullCardObj, cards);
     }
 }
+// Generates a new card object
 function generateCard() {
     let generatedCard = generateCardData();
     let fullCardObj = {
@@ -231,6 +242,7 @@ function generateCard() {
     return fullCardObj;
 }
 
+// Gets all the cards in your hand from the database
 function getAllCardsInDB() {
     return new Promise(function (resolve, reject) {
         let transaction = db.transaction("cards", "readonly"); // (get db transaction)
@@ -265,6 +277,7 @@ function getAllCardsInDB() {
     })
 }
 
+// Gets the stored absolute position of the provided card key id from the database
 function getStoredPositionInDB(key) {
     return new Promise(function (resolve, reject) {
         let transaction = db.transaction("cards", "readonly"); // (1)
@@ -302,6 +315,8 @@ function getStoredPositionInDB(key) {
 var contentBox = document.getElementById("contentBox");
 window.addEventListener("load", loadTarotJson());
 
+
+// Loads the tarot json from the JSON document
 async function loadTarotJson() {
     // Attempt to load tarot card JSON data
     try {
@@ -324,18 +339,19 @@ async function loadTarotJson() {
     document.getElementById("cardCountBox").innerHTML = await countDBCards();
 }
 
+// Gets the card that is in the provided suit and index
 function getTarotCard(suit, index) {
     return tarotCardSuits[suit].cards[index];
 }
 
+// Generates new card data
 function generateCardData() {
     let randSuit = Math.floor(Math.random() * (tarotCardSuits.length));
     let randCardIndex = Math.floor(Math.random() * (tarotCardSuits[randSuit].cards.length - 1));
     return getTarotCard(randSuit, randCardIndex);
-
-    //return [randSuit, randCardIndex];
 }
 
+// Event handler for the draw tarot button; adds a new card to your hand
 async function onGenerateTarot() {
     // Set contentBox if it is not assigned already
     if (contentBox == null) {
@@ -353,6 +369,7 @@ async function onGenerateTarot() {
     document.getElementById("cardCountBox").innerHTML = await countDBCards();
 }
 
+// Flips the card upright or viceversa
 function flipCard(element) {
     if (document.querySelectorAll('.tarotCard').length > 0) {
         saveCardPositions();
@@ -404,6 +421,7 @@ function flipCard(element) {
     };
 }
 
+// Shrinks the text on the card so that it fits on the cards
 function shrinkText(element) {
     let fontSize = 25; // Initial font size
     element.style.fontSize = fontSize + 'px';
@@ -431,6 +449,7 @@ function shrinkText(element) {
     console.log(element.innerHTML,": ","Final Width: ", element.scrollWidth, " Font Size: ", element.width);
 }
 
+// Adds a new card to your hand
 function drawCard(card, key) {
     let temp = document.getElementsByTagName("template")[0];
     let clon = temp.content.cloneNode(true);
@@ -464,6 +483,7 @@ function drawCard(card, key) {
     document.getElementById("playMat").appendChild(clon);
 }
 
+// Removes all rendered cards that are on the screen
 function removeRenderedCards() {
     var cards = document.querySelectorAll('.tarotCard');
 
@@ -472,6 +492,7 @@ function removeRenderedCards() {
     });
 }
 
+// This function spreads out recently spawned in cards so that they are not stacked
 async function fixNewRenderedCards() {
     let cards = document.querySelectorAll('.tarotCard');
 
@@ -495,6 +516,7 @@ async function fixNewRenderedCards() {
     
 }
 
+// Rerenders the cards onto the screen
 async function renderTarotCards() {
     if (document.querySelectorAll('.tarotCard').length > 0) {
         saveCardPositions();
@@ -521,6 +543,7 @@ async function renderTarotCards() {
     console.log("RENDERING of " + cards.length + " TAROT CARDS COMPLETED.");
 }
 
+// Saves the position of all the tarot cards on the screen
 function saveCardPositions() {
     let transaction = db.transaction("cards", "readwrite"); // (1)
 
@@ -529,6 +552,7 @@ function saveCardPositions() {
 
     let cursorRequest = cards.openCursor(); // (3)
 
+    
     var onScreenCards = document.querySelectorAll('.tarotCard');
     cursorRequest.onsuccess = function (event) {
         let cursor = event.target.result;
@@ -562,6 +586,7 @@ function saveCardPositions() {
 
     };
 
+    // If the cursor request failed
     cursorRequest.onerror = function (event) {
         console.log("Error", cursorRequest.error);
     };
@@ -571,12 +596,13 @@ function saveCardPositions() {
 
 
 // CARD DROPPAGE LOGIC ============================================================================================================================================================
+// Some functions were remodeled from an stackoverflow question about dragging elements
 
 let draggedElement = null;
 let offsetX;
 let offsetY;
 
-// This function was remodeled from an stackoverflow question about dragging elements
+// Event handler for the drag event starting
 onDragStart = function (ev) {
     const rect = ev.target.getBoundingClientRect();
 
@@ -587,6 +613,7 @@ onDragStart = function (ev) {
     ev.dataTransfer.setData("text/plain", ""); // Required for Firefox
 };
 
+// Changes the direction of the drop shadow so it radiates as if a light were in the center of the screen
 function fixShadowDir(draggedElement, playmat) {
     const lightSourceRect = playmat.getBoundingClientRect();
     const lightSourcePos = {
@@ -603,6 +630,7 @@ function fixShadowDir(draggedElement, playmat) {
     draggedElement.style.boxShadow = (draggedElementPos.x - lightSourcePos.x) / 10 + 'px ' + (draggedElementPos.y - lightSourcePos.y) / 10 + 'px 10px -10px #000000';
 }
 
+// Event handler for dropping a moved card
 drop_handler = function (ev) {
     ev.preventDefault();
 
@@ -617,18 +645,17 @@ drop_handler = function (ev) {
     playmat.appendChild(draggedElement);
 };
 
+// Event handler for dragging and moving a card
 dragover_handler = function (ev) {
     ev.preventDefault();
     ev.dataTransfer.dropEffect = "move";
 };
 
+// On page unload event handler
 window.addEventListener('beforeunload', function (ev) {
     // If we got cards, save their positions before the page unloads
     if (document.querySelectorAll('.tarotCard').length > 0) {
         saveCardPositions();
         
     }
-    
-
-
 });
