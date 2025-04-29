@@ -203,9 +203,6 @@ function generateCards(amt) {
 
     //let randCards = [];
     for (let i = 0; i < amt; i++) {
-        //randCards.push(generateCardDataNums());
-        
-
         let fullCardObj = generateCard();
         console.log(fullCardObj);
 
@@ -236,17 +233,12 @@ function generateCard() {
 
 function getAllCardsInDB() {
     return new Promise(function (resolve, reject) {
-        let transaction = db.transaction("cards", "readonly"); // (1)
+        let transaction = db.transaction("cards", "readonly"); // (get db transaction)
 
         // get an object store to operate on it
-        let dbStore = transaction.objectStore("cards"); // (2)
+        let dbStore = transaction.objectStore("cards"); // (gets the db objectstore of cards)
 
-        let cursorRequest = dbStore.openCursor(); // (3)
-
-        //request.onsuccess = (event) => { // (4)
-        //    console.log("Retrieved cards from the store", event.target.result);
-        //    resolve(event.target.result);
-        //};
+        let cursorRequest = dbStore.openCursor(); // (opens a cursor for out objectstore)
 
         var result = {};
         cursorRequest.onsuccess = function (event) {
@@ -282,10 +274,6 @@ function getStoredPositionInDB(key) {
 
         let cursorRequest = dbStore.openCursor(); // (3)
 
-        //request.onsuccess = (event) => { // (4)
-        //    console.log("Retrieved cards from the store", event.target.result);
-        //    resolve(event.target.result);
-        //};
         cursorRequest.onsuccess = function (event) {
             let cursor = event.target.result;
 
@@ -333,8 +321,6 @@ async function loadTarotJson() {
     console.log("TAROT JSON LOADED.");
 
     // Do the front-end loading of the data
-    //renderTarotCards();
-
     document.getElementById("cardCountBox").innerHTML = await countDBCards();
 }
 
@@ -357,7 +343,6 @@ async function onGenerateTarot() {
     }
 
     let initRandCard = generateCardData();
-    //console.log(JSON.stringify(initRandCard));
 
     // Set textbox to raw JSON data of the randomly drawn tarot card
     contentBox.innerHTML = JSON.stringify(initRandCard);
@@ -450,9 +435,6 @@ function drawCard(card, key) {
     let temp = document.getElementsByTagName("template")[0];
     let clon = temp.content.cloneNode(true);
 
-    //// Add the cards data onto the card graphic so that we can pull from the data later if needed
-    //clon.setAttribute("data-cardID", card.key);
-
     // Get the place for the data to be placed on the card
     let cardNumBox = clon.querySelector(".cardNum");
     let cardDescBox = clon.querySelector(".cardDesc");
@@ -470,7 +452,6 @@ function drawCard(card, key) {
         cardNameBox.innerHTML = card.name + (card.isReversed ? " (R)" : "");
     }
     else {
-        // Do something
         // Get the data from the randomly drawn tarot card into their respective places
         cardNumBox.style.display = 'none';
         cardDescBox.style.display = 'none';
@@ -595,6 +576,7 @@ let draggedElement = null;
 let offsetX;
 let offsetY;
 
+// This function was remodeled from an stackoverflow question about dragging elements
 onDragStart = function (ev) {
     const rect = ev.target.getBoundingClientRect();
 
@@ -617,7 +599,7 @@ function fixShadowDir(draggedElement, playmat) {
         x: (draggedElementRect.left + draggedElementRect.right) / 2,
         y: (draggedElementRect.top + draggedElementRect.bottom) / 2
     }
-    //console.log("X: ", (draggedElementPos.x - lightSourcePos.x) / 10, " Y: ", (draggedElementPos.y - lightSourcePos.y) / 10);
+    
     draggedElement.style.boxShadow = (draggedElementPos.x - lightSourcePos.x) / 10 + 'px ' + (draggedElementPos.y - lightSourcePos.y) / 10 + 'px 10px -10px #000000';
 }
 
@@ -631,8 +613,7 @@ drop_handler = function (ev) {
     draggedElement.style.top = ev.clientY - offsetY + 'px';
 
     fixShadowDir(draggedElement, playmat);
-
-    //draggedElement.style.boxShadow = '10px 10px 10px #000000';
+    
     playmat.appendChild(draggedElement);
 };
 
