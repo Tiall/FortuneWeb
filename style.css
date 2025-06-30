@@ -12,7 +12,11 @@ body {
     float: left;
     margin-right: 1rem;
     margin-bottom: 1rem;
-/*    box-shadow: 10px 10px 0px #000000;*/
+
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 16px;
+    /*    box-shadow: 10px 10px 0px #000000;*/
 }
 .tarotCard .cardNum{
     text-align: center;

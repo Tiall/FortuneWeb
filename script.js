@@ -478,8 +478,7 @@ function drawCard(card, key) {
         cardNameBox.style.display = 'none';
 
         cardBase.style.backgroundImage = "url('images/back.png')";
-        cardBase.style.backgroundRepeat = "no-repeat";
-        cardBase.style.backgroundSize = "cover";
+        
     }
 
     clon.querySelector(".tarotCard").setAttribute('card-id', key);
