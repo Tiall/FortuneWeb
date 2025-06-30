@@ -458,6 +458,7 @@ function drawCard(card, key) {
     let cardNumBox = clon.querySelector(".cardNum");
     let cardDescBox = clon.querySelector(".cardDesc");
     let cardNameBox = clon.querySelector(".cardName");
+    let cardBase = clon.querySelector(".tarotCard");
 
     if (card.isFlipped) {
         // Show the text boxes
@@ -476,6 +477,9 @@ function drawCard(card, key) {
         cardDescBox.style.display = 'none';
         cardNameBox.style.display = 'none';
 
+        cardBase.style.backgroundImage = "url('images/back.png')";
+        cardBase.style.backgroundRepeat = "no-repeat";
+        cardBase.style.backgroundSize = "cover";
     }
 
     clon.querySelector(".tarotCard").setAttribute('card-id', key);
