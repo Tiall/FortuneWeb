@@ -376,6 +376,7 @@ function filterLibraryCards(suit) {
     else {
         // Load all cards from all suits
         for (let i = 0; i < tarotCardSuits.length; i++) {
+            console.log("Loading suit: ", tarotCardSuits[i].name);
             loadLibraryCardsFromSuit(i);
         }
     }
