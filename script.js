@@ -333,39 +333,52 @@ async function onPageLoad() {
             }
             break;
         case "Library Page":
-            loadLibraryCards();
+            filterLibraryCards(-1);
             break;
     }
 }
-function loadLibraryCards() {
+
+function loadLibraryCardsFromSuit(suit) {
     let libraryList = document.getElementsByClassName("libraryList")[0];
-    for (let suit = 0; suit < tarotCardSuits.length; suit++) {
-        for (let cardIndex = 0; cardIndex < tarotCardSuits[suit].cards.length; cardIndex++) {
-            let temp = document.getElementsByTagName("template")[0];
-            let clon = temp.content.cloneNode(true);
+    for (let cardIndex = 0; cardIndex < tarotCardSuits[suit].cards.length; cardIndex++) {
+        let temp = document.getElementsByTagName("template")[0];
+        let clon = temp.content.cloneNode(true);
 
-            // Get the place for the data to be placed on the card
-            let cardNumBox = clon.querySelector(".cardNum");
-            cardNumBox.innerText = tarotCardSuits[suit].cards[cardIndex].number;
+        // Get the place for the data to be placed on the card
+        let cardNumBox = clon.querySelector(".cardNum");
+        cardNumBox.innerText = tarotCardSuits[suit].cards[cardIndex].number;
 
-            let cardNameBox = clon.querySelector(".cardName");
-            cardNameBox.innerText = tarotCardSuits[suit].cards[cardIndex].name;
+        let cardNameBox = clon.querySelector(".cardName");
+        cardNameBox.innerText = tarotCardSuits[suit].cards[cardIndex].name;
 
-            let cardDescUpBox = clon.querySelector(".cardDescUp");
-            cardDescUpBox.innerText = tarotCardSuits[suit].cards[cardIndex].upright;
+        let cardDescUpBox = clon.querySelector(".cardDescUp");
+        cardDescUpBox.innerText = tarotCardSuits[suit].cards[cardIndex].upright;
 
-            let cardDescRevBox = clon.querySelector(".cardDescRev");
-            cardDescRevBox.innerText = tarotCardSuits[suit].cards[cardIndex].reversed;
+        let cardDescRevBox = clon.querySelector(".cardDescRev");
+        cardDescRevBox.innerText = tarotCardSuits[suit].cards[cardIndex].reversed;
 
-            
 
-            let cardBase = clon.querySelector(".libraryCard");
-            cardBase.setAttribute('suit', suit);
 
-            libraryList.appendChild(clon);
+        let cardBase = clon.querySelector(".libraryCard");
+        cardBase.setAttribute('suit', suit);
+
+        libraryList.appendChild(clon);
+    }
+}
+function filterLibraryCards(suit) {
+    let libraryList = document.getElementsByClassName("libraryList")[0];
+    libraryList.innerHTML = ""; // Clear the library list
+
+    if (suit < 0) {
+        // Load cards from specific suit
+        loadLibraryCardsFromSuit(suit);
+    }
+    else {
+        // Load all cards from all suits
+        for (let i = 0; i < tarotCardSuits.length; i++) {
+            loadLibraryCardsFromSuit(i);
         }
     }
-    
 }
 
 
