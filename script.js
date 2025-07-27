@@ -317,6 +317,7 @@ window.addEventListener("load", onPageLoad());
 async function onPageLoad() {
     // Loads the tarot JSON data
     loadTarotJson();
+    console.log("PageTitle: ", document.title, "\ndbLoaded?: ", db != null);
     if (db != null) {
         switch (document.title) {
             case "Tarot Page":
