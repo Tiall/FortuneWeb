@@ -9,12 +9,20 @@
     <script type="text/javascript" src="script.js"></script>
   </head>
   <body>
-      <h1>Generic Fortune Teller Website</h1>
+      <div class="titleBar">
+          <h1>Generic Fortune Teller Website</h1>
+          <a class="button active" href="">Playmat</a>
+          <a class="button" href="library.html">Library</a>
+      </div>
+      
+
+      <br /><br />
+
       <button type="button" onclick="onGenerateTarot()">Draw Tarot</button>
       <button type="button" onclick="renderTarotCards()">Render Tarot</button>
       <button type="button" onclick="replaceCards()">Replace Tarot</button>
       <p style="display:inline; margin-left: 1rem;">Card Count: <span id="cardCountBox"></span></p>
-      <p id="contentBox">
+      <p>
           Generate some tarot cards to get started with your session!
       </p>
       <h3>Controls:</h3>

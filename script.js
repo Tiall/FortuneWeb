@@ -312,9 +312,56 @@ function getStoredPositionInDB(key) {
     })
 }
 
-var contentBox = document.getElementById("contentBox");
-window.addEventListener("load", loadTarotJson());
+window.addEventListener("load", onPageLoad());
 
+async function onPageLoad() {
+    // Loads the tarot JSON data
+    loadTarotJson();
+    if (db != null) {
+        switch (document.title) {
+            case "Tarot Page":
+                // Set the hand card count box to the current card count in the database
+                document.getElementById("cardCountBox").innerHTML = await countDBCards();
+                break;
+            case "Library Page":
+                loadLibraryCards();
+                break;
+        }
+    }
+    
+}
+function loadLibraryCards() {
+    let libraryList = document.getElementById("cardList");
+    for (let suit = 0; suit < tarotCardSuits.length; suit++) {
+        for (let cardIndex = 0; cardIndex < tarotCardSuits[suit].cards.length; cardIndex++) {
+            let temp = document.getElementsByTagName("template")[0];
+            let clon = temp.content.cloneNode(true);
+
+            // Get the place for the data to be placed on the card
+            let cardNumBox = clon.querySelector(".cardNum");
+            cardNumBox.innerText = tarotCardSuits[suit].cards[cardIndex].number;
+
+            let cardNameBox = clon.querySelector(".cardName");
+            cardNameBox.innerText = tarotCardSuits[suit].cards[cardIndex].name;
+
+            let cardDescUpBox = clon.querySelector(".cardDescUp");
+            cardDescUpBox.innerText = tarotCardSuits[suit].cards[cardIndex].upright;
+
+            let cardDescRevBox = clon.querySelector(".cardDescRev");
+            cardDescRevBox.innerText = tarotCardSuits[suit].cards[cardIndex].reversed;
+
+            
+
+            let cardBase = clon.querySelector(".libraryCard");
+
+            libraryList.appendChild(clon);
+        }
+    }
+    
+}
+
+
+/*var contentBox = document.getElementById("contentBox");*/
 
 // Loads the tarot json from the JSON document
 async function loadTarotJson() {
@@ -329,14 +376,12 @@ async function loadTarotJson() {
 
     }
     catch {
-        contentBox.innerHTML = "ERROR TarotCardsJSON not loaded!";
+        //contentBox.innerHTML = "ERROR TarotCardsJSON not loaded!";
+        alert("ERROR TarotCardsJSON not loaded! Please check the console for more information.");
         console.log("ERROR TarotCardsJSON not loaded!");
     }
 
     console.log("TAROT JSON LOADED.");
-
-    // Do the front-end loading of the data
-    document.getElementById("cardCountBox").innerHTML = await countDBCards();
 }
 
 // Gets the card that is in the provided suit and index
@@ -353,15 +398,15 @@ function generateCardData() {
 
 // Event handler for the draw tarot button; adds a new card to your hand
 async function onGenerateTarot() {
-    // Set contentBox if it is not assigned already
-    if (contentBox == null) {
-        contentBox = document.getElementById("contentBox");
-    }
+    //// Set contentBox if it is not assigned already
+    //if (contentBox == null) {
+    //    contentBox = document.getElementById("contentBox");
+    //}
 
-    let initRandCard = generateCardData();
+    //let initRandCard = generateCardData();
 
-    // Set textbox to raw JSON data of the randomly drawn tarot card
-    contentBox.innerHTML = JSON.stringify(initRandCard);
+    //// Set textbox to raw JSON data of the randomly drawn tarot card
+    //contentBox.innerHTML = JSON.stringify(initRandCard);
 
 
     generateCards(1);
@@ -662,3 +707,12 @@ window.addEventListener('beforeunload', function (ev) {
         
     }
 });
+
+
+
+
+
+
+// CARD DROPPAGE LOGIC ============================================================================================================================================================
+
+

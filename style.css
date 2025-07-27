@@ -34,7 +34,7 @@ body {
     white-space:nowrap;
 }
 
-h1 {
+.titleBar h1 {
     --main: white;
     --bit: #5b4b9f;
     background-image: linear-gradient(to right, var(--main) 35%, var(--bit) 40%,var(--bit) 60%, var(--main) 65%);
@@ -56,6 +56,20 @@ h1 {
     }
 }
 
+.titleBar .button {
+    background-color: transparent;
+    color: white;
+    border: solid 1px grey;
+    padding: 0.2rem;
+
+    text-decoration: none;
+}
+.titleBar .button.active {
+    background-color: #ffffff50;
+    color: white;
+}
+
+
 #playMat {
     width: calc(100% - 22px);
     height: 100%;
@@ -70,4 +84,12 @@ ul {
 }
 h3 {
     margin-block: 0;
+}
+
+
+.libraryCard {
+    border: solid 1px lightGrey;
+    background-color: #333333;
+    padding-inline: 0.5rem;
+    margin-bottom: 0.5rem;
 }
