@@ -318,16 +318,14 @@ async function onPageLoad() {
     // Loads the tarot JSON data
     loadTarotJson();
     console.log("PageTitle: ", document.title, "\ndbLoaded?: ", db != null);
-    if (db != null) {
-        switch (document.title) {
-            case "Tarot Page":
-                // Set the hand card count box to the current card count in the database
-                document.getElementById("cardCountBox").innerHTML = await countDBCards();
-                break;
-            case "Library Page":
-                loadLibraryCards();
-                break;
-        }
+    switch (document.title) {
+        case "Tarot Page":
+            // Set the hand card count box to the current card count in the database
+            document.getElementById("cardCountBox").innerHTML = await countDBCards();
+            break;
+        case "Library Page":
+            loadLibraryCards();
+            break;
     }
     
 }
