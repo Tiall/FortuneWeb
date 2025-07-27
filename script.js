@@ -27,6 +27,19 @@ openRequest.onsuccess = function () {
     db = openRequest.result;
     repairOldCards();
     // continue working with database using db object
+
+    switch (document.title) {
+        case "Tarot Page":
+            // Set the hand card count box to the current card count in the database
+            let cardCount = await countDBCards();
+            if (cardCount != null) {
+                document.getElementById("cardCountBox").innerHTML = cardCount;
+            }
+            break;
+        case "Library Page":
+            loadLibraryCards();
+            break;
+    }
 };
 
 // Adds the provided card to the provided database store
@@ -318,20 +331,8 @@ async function onPageLoad() {
     // Loads the tarot JSON data
     loadTarotJson();
 
-    await db; // Wait for the database to be loaded
     console.log("PageTitle: ", document.title, "\ndbLoaded?: ", db);
-    switch (document.title) {
-        case "Tarot Page":
-            // Set the hand card count box to the current card count in the database
-            let cardCount = await countDBCards();
-            if (cardCount != null) {
-                document.getElementById("cardCountBox").innerHTML = cardCount;
-            }
-            break;
-        case "Library Page":
-            loadLibraryCards();
-            break;
-    }
+    
     
 }
 function loadLibraryCards() {
