@@ -27,19 +27,6 @@ openRequest.onsuccess = function () {
     db = openRequest.result;
     repairOldCards();
     // continue working with database using db object
-
-    switch (document.title) {
-        case "Tarot Page":
-            // Set the hand card count box to the current card count in the database
-            let cardCount = await countDBCards();
-            if (cardCount != null) {
-                document.getElementById("cardCountBox").innerHTML = cardCount;
-            }
-            break;
-        case "Library Page":
-            loadLibraryCards();
-            break;
-    }
 };
 
 // Adds the provided card to the provided database store
@@ -331,9 +318,24 @@ async function onPageLoad() {
     // Loads the tarot JSON data
     loadTarotJson();
 
-    console.log("PageTitle: ", document.title, "\ndbLoaded?: ", db);
     
+    while (tarotCardSuits == undefined) {
+        await new Promise(resolve => setTimeout(resolve, 100)); // Wait until the db is loaded
+    }
+    console.log("PageTitle: ", document.title, "\ndbLoaded?: ", tarotCardSuits);
     
+    switch (document.title) {
+        case "Tarot Page":
+            // Set the hand card count box to the current card count in the database
+            let cardCount = await countDBCards();
+            if (cardCount != null) {
+                document.getElementById("cardCountBox").innerHTML = cardCount;
+            }
+            break;
+        case "Library Page":
+            loadLibraryCards();
+            break;
+    }
 }
 function loadLibraryCards() {
     let libraryList = document.getElementById("cardList");
