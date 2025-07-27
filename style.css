@@ -92,4 +92,11 @@ h3 {
     background-color: #333333;
     padding-inline: 0.5rem;
     margin-bottom: 0.5rem;
+
+    min-width: 200px;
+}
+.libraryList {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
 }
