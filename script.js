@@ -340,7 +340,7 @@ async function onPageLoad() {
 
 function loadLibraryCardsFromSuit(suit) {
     let libraryList = document.getElementsByClassName("libraryList")[0];
-    for (let cardIndex = 0; cardIndex < tarotCardSuits[suit].cards.length; cardIndex++) {
+    for (let cardIndex = 0; cardIndex < tarotCardSuits[suit].length; cardIndex++) {
         let temp = document.getElementsByTagName("template")[0];
         let clon = temp.content.cloneNode(true);
 
