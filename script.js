@@ -317,11 +317,16 @@ window.addEventListener("load", onPageLoad());
 async function onPageLoad() {
     // Loads the tarot JSON data
     loadTarotJson();
+
+    await db; // Wait for the database to be loaded
     console.log("PageTitle: ", document.title, "\ndbLoaded?: ", db != null);
     switch (document.title) {
         case "Tarot Page":
             // Set the hand card count box to the current card count in the database
-            document.getElementById("cardCountBox").innerHTML = await countDBCards();
+            let cardCount = await countDBCards();
+            if (cardCount != null) {
+                document.getElementById("cardCountBox").innerHTML = cardCount;
+            }
             break;
         case "Library Page":
             loadLibraryCards();
