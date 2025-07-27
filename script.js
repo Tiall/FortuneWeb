@@ -319,7 +319,7 @@ async function onPageLoad() {
     loadTarotJson();
 
     await db; // Wait for the database to be loaded
-    console.log("PageTitle: ", document.title, "\ndbLoaded?: ", db != null);
+    console.log("PageTitle: ", document.title, "\ndbLoaded?: ", db);
     switch (document.title) {
         case "Tarot Page":
             // Set the hand card count box to the current card count in the database
