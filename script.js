@@ -369,7 +369,7 @@ function filterLibraryCards(suit) {
     let libraryList = document.getElementsByClassName("libraryList")[0];
     libraryList.innerHTML = ""; // Clear the library list
 
-    if (suit < 0) {
+    if (suit >= 0) {
         // Load cards from specific suit
         loadLibraryCardsFromSuit(suit);
     }
