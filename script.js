@@ -338,7 +338,7 @@ async function onPageLoad() {
     }
 }
 function loadLibraryCards() {
-    let libraryList = document.getElementById("cardList");
+    let libraryList = document.getElementsByClassName("libraryList")[0];
     for (let suit = 0; suit < tarotCardSuits.length; suit++) {
         for (let cardIndex = 0; cardIndex < tarotCardSuits[suit].cards.length; cardIndex++) {
             let temp = document.getElementsByTagName("template")[0];
