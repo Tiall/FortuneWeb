@@ -360,6 +360,7 @@ function loadLibraryCards() {
             
 
             let cardBase = clon.querySelector(".libraryCard");
+            cardBase.setAttribute('suit', suit);
 
             libraryList.appendChild(clon);
         }
