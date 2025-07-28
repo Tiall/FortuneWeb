@@ -333,7 +333,7 @@ async function onPageLoad() {
             }
             break;
         case "Library Page":
-            filterLibraryCards(-1);
+            filterLibraryCards(null, -1);
             break;
     }
 }
@@ -371,8 +371,11 @@ function filterLibraryCards(button, suit) {
         btn.style.backgroundColor = "#ffffff"; // Reset all button colors
     });
 
-    if (document.querySelectorAll(".librarySearch button")[0]) {
+    if (button) {
         button.style.backgroundColor = "rgb(164, 164, 164)"; // Reset all button colors
+    }
+    else {
+        document.querySelectorAll(".librarySearch button")[0].style.backgroundColor = "rgb(164, 164, 164)"; // Reset all button colors
     }
 
     let libraryList = document.getElementsByClassName("libraryList")[0];
