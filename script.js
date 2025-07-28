@@ -26,7 +26,9 @@ openRequest.onerror = function () {
 openRequest.onsuccess = function () {
     db = openRequest.result;
     repairOldCards();
-    // continue working with database using db object
+
+    // Render our cards on the screen
+    renderTarotCards();
 };
 
 // Adds the provided card to the provided database store
@@ -509,6 +511,25 @@ async function onGenerateTarot() {
     generateCards(1);
 
     document.getElementById("cardCountBox").innerHTML = await countDBCards();
+
+    renderTarotCards();
+}
+
+function clearTarot() {
+    let transaction = db.transaction("cards", "readwrite"); // (1)
+
+    // get an object store to operate on it
+    let cards = transaction.objectStore("cards"); // (2)
+
+    let clearRequest = cards.clear();
+
+    clearRequest.onsuccess = () => {
+        console.log('Card object store cleared successfully');
+    };
+
+    clearRequest.onerror = (event) => {
+        console.error('Error clearing object store:', event.target.errorCode);
+    };
 }
 
 // Flips the card upright or viceversa
