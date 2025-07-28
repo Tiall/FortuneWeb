@@ -7,6 +7,8 @@ var openRequest = indexedDB.open("cardStorage", 1);
 // The db we get from the call request
 var db;
 
+history.scrollRestoration = "manual";
+
 // On invalid database load
 openRequest.onupgradeneeded = function () {
     // triggers if the client had no database
