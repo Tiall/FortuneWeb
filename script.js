@@ -774,8 +774,8 @@ let offsetY;
 onDragStart = function (ev) {
     const rect = ev.target.getBoundingClientRect();
 
-    offsetX = ev.clientX - rect.x;
-    offsetY = ev.clientY - rect.y;
+    offsetX = ev.screenX - rect.x;
+    offsetY = ev.screenY - rect.y;
 
     draggedElement = ev.target;
     ev.dataTransfer.setData("text/plain", ""); // Required for Firefox
@@ -805,8 +805,8 @@ drop_handler = function (ev) {
     const playmat = document.getElementById("playMat");    
 
     draggedElement.style.position = 'absolute';
-    draggedElement.style.left = ev.clientX - offsetX + 'px';
-    draggedElement.style.top = ev.clientY - offsetY + 'px';
+    draggedElement.style.left = ev.screenX - offsetX + 'px';
+    draggedElement.style.top = ev.screenY - offsetY + 'px';
 
     fixShadowDir(draggedElement, playmat);
     
