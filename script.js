@@ -658,10 +658,10 @@ function drawCard(card, key) {
         let cardRect = card.getBoundingClientRect();
         card.style.position = 'absolute';
 
-        let cardPos = await getStoredPositionInDB(card.getAttribute("card-id"));
+        
 
-        card.style.left = ((cardPos.x == -1) ? cardRect.left : cardPos.x);
-        card.style.top = ((cardPos.y == -1) ? cardRect.top : cardPos.y);
+        card.style.left = cardRect.left;
+        card.style.top = cardRect.top;
     }
 
     clon.querySelector(".tarotCard").setAttribute('card-id', key);
