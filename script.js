@@ -676,6 +676,18 @@ async function fixNewRenderedCards() {
     for (let i = cards.length-1; i >= 0; i--) {
         let card = cards[i];
 
+        if (document.getElementById("playMat").classList.contains("gridMode")) {
+            // If we are in grid mode, we don't need to position the cards
+            card.style.position = 'relative';
+            card.style.left = '0px';
+            card.style.top = '0px';
+            card.style.visibility = 'visible';
+
+            shrinkText(card.querySelector(".cardName"));
+            card.style.visibility = 'visible';
+            continue;
+        }
+
         if (card.style.position != 'absolute') {
             let cardRect = card.getBoundingClientRect();
             card.style.position = 'absolute';
