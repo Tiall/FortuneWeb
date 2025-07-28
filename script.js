@@ -365,7 +365,11 @@ function loadLibraryCardsFromSuit(suit) {
         libraryList.appendChild(clon);
     }
 }
+
+var currentFilterSuit = -1; // -1 means no filter, 0-3 are the suits
 function filterLibraryCards(button, suit) {
+    currentFilterSuit = suit;
+
     document.querySelectorAll(".librarySearch button").forEach(btn => {
         btn.style.backgroundColor = "#ffffff"; // Reset all button colors
     });
@@ -429,9 +433,9 @@ function searchLibraryCards(searchBar) {
     let libraryList = document.getElementsByClassName("libraryList")[0];
     libraryList.innerHTML = ""; // Clear the library list
 
-    if (suit >= 0) {
+    if (currentFilterSuit >= 0) {
         // Load cards from specific suit
-        searchLibraryCardsFromSuit(suit, term);
+        searchLibraryCardsFromSuit(currentFilterSuit, term);
     }
     else {
         // Load all cards from all suits
