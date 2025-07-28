@@ -805,8 +805,8 @@ drop_handler = function (ev) {
     const playmat = document.getElementById("playMat");    
 
     draggedElement.style.position = 'absolute';
-    draggedElement.style.left = ev.screenX - offsetX + 'px';
-    draggedElement.style.top = ev.screenY - offsetY + 'px';
+    draggedElement.style.left = window.scrollX + ev.screenX - offsetX + 'px';
+    draggedElement.style.top = window.scrollY + ev.screenY - offsetY + 'px';
 
     fixShadowDir(draggedElement, playmat);
     
