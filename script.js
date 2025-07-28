@@ -649,10 +649,19 @@ function drawCard(card, key) {
     if (document.getElementById("playMat").classList.contains("gridMode")) {
         cardBase.float = 'none'; // If we are in grid mode, remove float
         cardBase.draggable = false; // If we are in grid mode, remove draggable
+        card.style.position = 'unset';
     }
     else {
         cardBase.float = 'left'; // If we are not in grid mode, set float to left
         cardBase.draggable = true; // If we are not in grid mode, set draggable to true
+        
+        let cardRect = card.getBoundingClientRect();
+        card.style.position = 'absolute';
+
+        let cardPos = await getStoredPositionInDB(card.getAttribute("card-id"));
+
+        card.style.left = ((cardPos.x == -1) ? cardRect.left : cardPos.x);
+        card.style.top = ((cardPos.y == -1) ? cardRect.top : cardPos.y);
     }
 
     clon.querySelector(".tarotCard").setAttribute('card-id', key);
@@ -678,9 +687,7 @@ async function fixNewRenderedCards() {
 
         if (document.getElementById("playMat").classList.contains("gridMode")) {
             // If we are in grid mode, we don't need to position the cards
-            card.style.position = 'relative';
-            card.style.left = '0px';
-            card.style.top = '0px';
+            card.style.position = 'unset';
             card.style.visibility = 'visible';
 
             shrinkText(card.querySelector(".cardName"));
