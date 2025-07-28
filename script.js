@@ -857,10 +857,10 @@ window.addEventListener('beforeunload', function (ev) {
 });
 
 
-function toggleGridMode() {
+function toggleGridMode(toggleButton) {
     let playMat = document.getElementById("playMat");
 
-    playMat.classList.toggle("gridMode");
+    playMat.classList.toggle("gridMode", toggleButton.value);
 
     renderTarotCards(); // Rerender cards to apply the grid mode to them
 }
