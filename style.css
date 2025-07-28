@@ -101,7 +101,7 @@ h3 {
     font-weight: normal;
 }
 
-.libraryList {
+.libraryList, .classList {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;

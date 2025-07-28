@@ -646,6 +646,15 @@ function drawCard(card, key) {
         
     }
 
+    if (document.getElementById("playMat").classList.contains("gridMode")) {
+        cardBase.float = 'none'; // If we are in grid mode, remove float
+        cardBase.draggable = false; // If we are in grid mode, remove draggable
+    }
+    else {
+        cardBase.float = 'left'; // If we are not in grid mode, set float to left
+        cardBase.draggable = true; // If we are not in grid mode, set draggable to true
+    }
+
     clon.querySelector(".tarotCard").setAttribute('card-id', key);
     clon.querySelector(".tarotCard").style.visibility = 'hidden';
     document.getElementById("playMat").appendChild(clon);
@@ -829,3 +838,10 @@ window.addEventListener('beforeunload', function (ev) {
 });
 
 
+function toggleGridMode() {
+    let playMat = document.getElementById("playMat");
+
+    playMat.classList.toggle("gridMode");
+
+    renderTarotCards(); // Rerender cards to apply the grid mode to them
+}
