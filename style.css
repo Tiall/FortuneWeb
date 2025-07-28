@@ -97,6 +97,9 @@ h3 {
 .libraryCard .cardName {
     text-align: center;
 }
+.libraryCard .cardNum {
+    font-weight: normal;
+}
 
 .libraryList {
     display: flex;
