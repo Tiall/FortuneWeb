@@ -523,8 +523,10 @@ function clearTarot() {
 
     let clearRequest = cards.clear();
 
-    clearRequest.onsuccess = () => {
+    clearRequest.onsuccess = async function () {
         console.log('Card object store cleared successfully');
+        renderTarotCards();
+        document.getElementById("cardCountBox").innerHTML = await countDBCards();
     };
 
     clearRequest.onerror = (event) => {
