@@ -154,74 +154,74 @@
             {
                 "number":2,
                 "name":"2 of Wands",
-				"upright":"Planning, making decisions, leaving home",
-				"reversed":"Fear of change, playing safe, bad planning"
+				        "upright":"Planning, making decisions, leaving home",
+				        "reversed":"Fear of change, playing safe, bad planning"
             },
             {
                 "number":3,
                 "name":"3 of Wands",
-				"upright":"Looking ahead, expansion, rapid growth",
-				"reversed":"Obstacles, delays, frustration"
+				        "upright":"Looking ahead, expansion, rapid growth",
+				        "reversed":"Obstacles, delays, frustration"
             },
             {
                 "number":4,
                 "name":"4 of Wands",
-				"upright":"Community, home, celebration",
-				"reversed":"lack of support, home conflict, transience"
+				        "upright":"Community, home, celebration",
+				        "reversed":"lack of support, home conflict, transience"
             },
             {
                 "number":5,
                 "name":"5 of Wands",
-				"upright":"Competition, rivalry, conflict",
-				"reversed":"Avoiding conflict, respecting differences, untrustworthiness"
+				        "upright":"Competition, rivalry, conflict",
+				        "reversed":"Avoiding conflict, respecting differences, untrustworthiness"
             },
             {
                 "number":6,
                 "name":"6 of Wands",
-				"upright":"Victory, success, public reward",
-				"reversed":"Excess pride, lack of acknowledgement, punishment"
+				        "upright":"Victory, success, public reward",
+				        "reversed":"Excess pride, lack of acknowledgement, punishment"
             },
             {
                 "number":7,
                 "name":"7 of Wands",
-				"upright":"Perseverance, defensive, maintaining control",
-				"reversed":"Give up, destroyed confidence, overwhelmed"
+				        "upright":"Perseverance, defensive, maintaining control",
+				        "reversed":"Give up, destroyed confidence, overwhelmed"
             },
             {
                 "number":8,
                 "name":"8 of Wands",
-				"upright":"Rapid action, movement, quick decisions",
-				"reversed":"Panic, waiting, slowdown"
+				        "upright":"Rapid action, movement, quick decisions",
+				        "reversed":"Panic, waiting, slowdown"
             },
             {
                 "number":9,
                 "name":"9 of Wands",
-				"upright":"Resiliance, grit, last stand",
-				"reversed":"Exhaustion, fatigue, questioning motivations"
+				        "upright":"Resiliance, grit, last stand",
+				        "reversed":"Exhaustion, fatigue, questioning motivations"
             },
             {
                 "number":10,
                 "name":"10 of Wands",
-				"upright":"Accomplishment, responsibility, burden",
-				"reversed":"Inability to delegate, overstressed, burnt out"
+				        "upright":"Accomplishment, responsibility, burden",
+				        "reversed":"Inability to delegate, overstressed, burnt out"
             },
             {
                 "number":11,
                 "name":"King of Wands",
-				"upright":"Big picture, leader, overcoming challenges",
-				"reversed":"Impulsive, overbearing, unachievable expectations"
+				        "upright":"Big picture, leader, overcoming challenges",
+				        "reversed":"Impulsive, overbearing, unachievable expectations"
             },
             {
                 "number":12,
                 "name":"Queen of Wands",
-				"upright":"Courage, determination, joy",
-				"reversed":"Selfishness, jealousy, insecurities"
+				        "upright":"Courage, determination, joy",
+				        "reversed":"Selfishness, jealousy, insecurities"
             },
             {
                 "number":13,
                 "name":"Page of Wands",
-				"upright":"Exploration, excitement, freedom",
-				"reversed":"Lack of direction, procrastination, creating conflict"
+				        "upright":"Exploration, excitement, freedom",
+				        "reversed":"Lack of direction, procrastination, creating conflict"
             }
         ]
     },
