@@ -338,29 +338,29 @@ async function onPageLoad() {
     }
 }
 
-function loadLibraryCardsFromSuit(suit) {
+function loadLibraryCardsFromSuit() {
     let libraryList = document.getElementsByClassName("libraryList")[0];
-    for (let cardIndex = 0; cardIndex < tarotCardSuits[suit].cards.length; cardIndex++) {
+    for (let cardIndex = 0; cardIndex < tarotCardSuits[currentFilterSuit].cards.length; cardIndex++) {
         let temp = document.getElementsByTagName("template")[0];
         let clon = temp.content.cloneNode(true);
 
         // Get the place for the data to be placed on the card
         let cardNumBox = clon.querySelector(".cardNum");
-        cardNumBox.innerText = tarotCardSuits[suit].cards[cardIndex].number;
+        cardNumBox.innerText = tarotCardSuits[currentFilterSuit].cards[cardIndex].number;
 
         let cardNameBox = clon.querySelector(".cardName");
-        cardNameBox.innerText = tarotCardSuits[suit].cards[cardIndex].name;
+        cardNameBox.innerText = tarotCardSuits[currentFilterSuit].cards[cardIndex].name;
 
         let cardDescUpBox = clon.querySelector(".cardDescUp");
-        cardDescUpBox.innerText = tarotCardSuits[suit].cards[cardIndex].upright;
+        cardDescUpBox.innerText = tarotCardSuits[currentFilterSuit].cards[cardIndex].upright;
 
         let cardDescRevBox = clon.querySelector(".cardDescRev");
-        cardDescRevBox.innerText = tarotCardSuits[suit].cards[cardIndex].reversed;
+        cardDescRevBox.innerText = tarotCardSuits[currentFilterSuit].cards[cardIndex].reversed;
 
 
 
         let cardBase = clon.querySelector(".libraryCard");
-        cardBase.setAttribute('suit', suit);
+        cardBase.setAttribute('suit', currentFilterSuit);
 
         libraryList.appendChild(clon);
     }
@@ -381,25 +381,27 @@ function filterLibraryCards(button, suit) {
         document.querySelectorAll(".librarySearch button")[0].style.backgroundColor = "rgb(164, 164, 164)"; // Reset all button colors
     }
 
-    let libraryList = document.getElementsByClassName("libraryList")[0];
-    libraryList.innerHTML = ""; // Clear the library list
+    //let libraryList = document.getElementsByClassName("libraryList")[0];
+    //libraryList.innerHTML = ""; // Clear the library list
 
-    if (suit >= 0) {
-        // Load cards from specific suit
-        loadLibraryCardsFromSuit(suit);
-    }
-    else {
-        // Load all cards from all suits
-        for (let i = 0; i < tarotCardSuits.length; i++) {
-            loadLibraryCardsFromSuit(i);
-        }
-    }
+    //if (suit >= 0) {
+    //    // Load cards from specific suit
+    //    searchLibraryCardsFromSuit(suit);
+    //}
+    //else {
+    //    // Load all cards from all suits
+    //    for (let i = 0; i < tarotCardSuits.length; i++) {
+    //        searchLibraryCardsFromSuit(i);
+    //    }
+    //}
+    searchLibraryCards(null);
 }
 
-function searchLibraryCardsFromSuit(suit, term) {
+var currentSearchTerm = ""; // The current search term in the library search bar
+function searchLibraryCardsFromSuit(suit) {
     let libraryList = document.getElementsByClassName("libraryList")[0];
     for (let cardIndex = 0; cardIndex < tarotCardSuits[suit].cards.length; cardIndex++) {
-        if (term != null && term.length > 0 && !tarotCardSuits[suit].cards[cardIndex].name.toLowerCase().includes(term)) {
+        if (currentSearchTerm != null && currentSearchTerm.length > 0 && !tarotCardSuits[suit].cards[cardIndex].name.toLowerCase().includes(currentSearchTerm)) {
             continue; // Skip this card if it does not match the search term
         }
 
@@ -428,19 +430,21 @@ function searchLibraryCardsFromSuit(suit, term) {
     }
 }
 function searchLibraryCards(searchBar) {
-    let term = searchBar.value.toLowerCase().trim();
+    if (searchBar != null) {
+        currentSearchTerm = searchBar.value.toLowerCase().trim();
+    }
 
     let libraryList = document.getElementsByClassName("libraryList")[0];
     libraryList.innerHTML = ""; // Clear the library list
 
     if (currentFilterSuit >= 0) {
         // Load cards from specific suit
-        searchLibraryCardsFromSuit(currentFilterSuit, term);
+        searchLibraryCardsFromSuit(currentFilterSuit, currentSearchTerm);
     }
     else {
         // Load all cards from all suits
         for (let i = 0; i < tarotCardSuits.length; i++) {
-            searchLibraryCardsFromSuit(i, term);
+            searchLibraryCardsFromSuit(i, currentSearchTerm);
         }
     }
 }
