@@ -366,7 +366,15 @@ function loadLibraryCardsFromSuit(suit) {
         libraryList.appendChild(clon);
     }
 }
-function filterLibraryCards(suit) {
+function filterLibraryCards(button, suit) {
+    document.querySelectorAll(".librarySearch button").forEach(btn => {
+        btn.style.backgroundColor = "#ffffff"; // Reset all button colors
+    });
+
+    if (button) {
+        button.style.backgroundColor = "#f0f0f0"; // Reset all button colors
+    }
+
     let libraryList = document.getElementsByClassName("libraryList")[0];
     libraryList.innerHTML = ""; // Clear the library list
 

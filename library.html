@@ -16,13 +16,16 @@
     </div>
     <br /><hr />
 
-    <h3>Filter Cards</h3>
-    <button type="button" onclick="filterLibraryCards(-1)">All Suits</button>
-    <button type="button" onclick="filterLibraryCards(0)">Major Arcana</button>
-    <button type="button" onclick="filterLibraryCards(1)">Wands</button>
-    <button type="button" onclick="filterLibraryCards(2)">Cups</button>
-    <button type="button" onclick="filterLibraryCards(3)">Swords</button>
-    <button type="button" onclick="filterLibraryCards(4)">Pentacles</button>
+    <div class="librarySearch">
+        <h3>Filter Cards</h3>
+        <button type="button" onclick="filterLibraryCards(this,-1)">All Suits</button>
+        <button type="button" onclick="filterLibraryCards(this,0)">Major Arcana</button>
+        <button type="button" onclick="filterLibraryCards(this,1)">Wands</button>
+        <button type="button" onclick="filterLibraryCards(this,2)">Cups</button>
+        <button type="button" onclick="filterLibraryCards(this,3)">Swords</button>
+        <button type="button" onclick="filterLibraryCards(this,4)">Pentacles</button>
+    </div>
+    
 
     <br /><br />
     <template>
