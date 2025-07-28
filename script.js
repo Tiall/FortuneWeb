@@ -198,6 +198,7 @@ function replaceCards() {
 
     cursorRequest.onerror = function (event) {
         console.log("Error", request.error);
+        
     };
 }
 
@@ -395,6 +396,13 @@ function filterLibraryCards(button, suit) {
     //    }
     //}
     searchLibraryCards(null);
+}
+
+// Clears the search bar and resets the library cards to show all cards
+function clearSearchBar() {
+    document.getElementById("librarySearchBar").value = ""; // Clear the search bar
+    currentSearchTerm = "";
+    searchLibraryCards(null); // Redoes the search with an empty search term
 }
 
 var currentSearchTerm = ""; // The current search term in the library search bar
