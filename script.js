@@ -649,19 +649,19 @@ function drawCard(card, key) {
     if (document.getElementById("playMat").classList.contains("gridMode")) {
         cardBase.float = 'none'; // If we are in grid mode, remove float
         cardBase.draggable = false; // If we are in grid mode, remove draggable
-        card.style.position = 'unset';
+        cardBase.style.position = 'unset';
     }
     else {
         cardBase.float = 'left'; // If we are not in grid mode, set float to left
         cardBase.draggable = true; // If we are not in grid mode, set draggable to true
         
-        let cardRect = card.getBoundingClientRect();
-        card.style.position = 'absolute';
+        let cardRect = document.getElementById("playMat").getBoundingClientRect();
+        cardBase.style.position = 'absolute';
 
         
 
-        card.style.left = cardRect.left;
-        card.style.top = cardRect.top;
+        cardBase.style.left = cardRect.left;
+        cardBase.style.top = cardRect.top;
     }
 
     clon.querySelector(".tarotCard").setAttribute('card-id', key);
