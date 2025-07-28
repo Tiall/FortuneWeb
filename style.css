@@ -94,6 +94,10 @@ h3 {
     margin-bottom: 0.5rem;
     width: 250px;
 }
+.libraryCard .cardName {
+    text-align: center;
+}
+
 .libraryList {
     display: flex;
     justify-content: space-around;
