@@ -371,8 +371,8 @@ function filterLibraryCards(button, suit) {
         btn.style.backgroundColor = "#ffffff"; // Reset all button colors
     });
 
-    if (button) {
-        button.style.backgroundColor = "#f0f0f0"; // Reset all button colors
+    if (document.querySelectorAll(".librarySearch button")[0]) {
+        button.style.backgroundColor = "rgb(164, 164, 164)"; // Reset all button colors
     }
 
     let libraryList = document.getElementsByClassName("libraryList")[0];
