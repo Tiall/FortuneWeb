@@ -615,7 +615,7 @@ function shrinkText(element) {
 }
 
 // Adds a new card to your hand
-function drawCard(card, key) {
+async function drawCard(card, key) {
     let temp = document.getElementsByTagName("template")[0];
     let clon = temp.content.cloneNode(true);
 
@@ -658,10 +658,8 @@ function drawCard(card, key) {
         let cardRect = document.getElementById("playMat").getBoundingClientRect();
         cardBase.style.position = 'absolute';
 
-        
-
-        cardBase.style.left = cardRect.left;
-        cardBase.style.top = cardRect.top;
+        cardBase.style.left = ((card.xPosition == -1) ? cardRect.left : card.xPosition);
+        cardBase.style.top = ((card.yPosition == -1) ? cardRect.top : card.yPosition);
     }
 
     clon.querySelector(".tarotCard").setAttribute('card-id', key);
