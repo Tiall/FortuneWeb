@@ -725,8 +725,7 @@ async function renderTarotCards() {
         console.log("NO TAROT CARDS STORED IN MEMORY; RENDER CANCELLED.")
         return;
     }
-
-    console.log("RENDERING " + cards.length + " TAROT CARDS...");
+    console.log("RENDERING " + Object.keys(cards).length + " TAROT CARDS...");
     for (const key in cards) {
         drawCard(cards[key], key);
         console.log("Rendered card: ", cards[key].name);
@@ -734,7 +733,7 @@ async function renderTarotCards() {
 
     fixNewRenderedCards();
 
-    console.log("RENDERING of " + cards.length + " TAROT CARDS COMPLETED.");
+    console.log("RENDERING of " + Object.keys(cards).length + " TAROT CARDS COMPLETED.");
 }
 
 // Saves the position of all the tarot cards on the screen
