@@ -1,5 +1,5 @@
 # FortuneWeb
-A tarot card "playmat" and library website. 
+A fortune teller web-app utilizing tarot cards as a medium. 
 
 ### Features:
 - **Draw** tarot cards from a virtual deck
