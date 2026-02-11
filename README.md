@@ -9,3 +9,4 @@ A fortune teller web-app utilizing tarot cards as a medium.
 - Playmat saves card data locally and persistantly (i.e. cards and their positions are saved between sessions)
 - Activate *Grid Mode* to render cards in a mobile-friendly, flowing grid.
   - Using *Grid Mode* won't erase positions of cards, so spreads persist regardless of easier viewing
+- Search through the *library* of cards with easy filtering and a searchbar for easy card-meaning research.
