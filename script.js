@@ -224,14 +224,16 @@ function generateCards(amt) {
 }
 // Generates a new card object
 function generateCard() {
+    let reversedRNG = (Math.random() > 0.5);
+
     let generatedCard = generateCardData();
     let fullCardObj = {
         number: generatedCard.number,
         name: generatedCard.name,
 
         // isReversed can be used to determine if we should flip the image on the card and it is used for the proceeding meaning
-        isReversed: Math.random() > 0.5,
-        meaning: (this.isReversed ? generatedCard.upright : generatedCard.reversed),
+        isReversed: reversedRNG,
+        meaning: (reversedRNG ? generatedCard.reversed : generatedCard.upright),
 
         // Has the card been flipped over yet?
         isFlipped: false,
@@ -242,6 +244,7 @@ function generateCard() {
 
         eTag: dbETagKey
     }
+    console.log(generatedCard, reversedRNG);
     return fullCardObj;
 }
 
