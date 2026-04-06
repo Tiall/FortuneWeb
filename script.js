@@ -341,6 +341,8 @@ async function onPageLoad() {
         case "Library Page":
             filterLibraryCards(null, -1);
             break;
+        default:
+            break;
     }
 }
 
@@ -403,6 +405,14 @@ function filterLibraryCards(button, suit) {
     searchLibraryCards(null);
 }
 
+var currentCardsOnly = false;
+function toggleCurrentCardsOnly(checkbox) {
+    currentCardsOnly = checkbox.checked;
+    searchLibraryCards(null);
+}
+        
+
+
 // Clears the search bar and resets the library cards to show all cards
 function clearSearchBar() {
     document.getElementById("librarySearchBar").value = ""; // Clear the search bar
@@ -411,10 +421,22 @@ function clearSearchBar() {
 }
 
 var currentSearchTerm = ""; // The current search term in the library search bar
-function searchLibraryCardsFromSuit(suit) {
+async function searchLibraryCardsFromSuit(suit) {
     let libraryList = document.getElementsByClassName("libraryList")[0];
+
+    let currentCards = []; 
+    if (currentCardsOnly) {
+        // Get the current cards in our hand and save their names in a list so that we can compare them to the library cards
+        currentCards = Object.values(await getAllCardsInDB()).map(card => card.name.toLowerCase());
+        console.log("Current Cards: ", currentCards);
+    }
+
     for (let cardIndex = 0; cardIndex < tarotCardSuits[suit].cards.length; cardIndex++) {
-        if (currentSearchTerm != null && currentSearchTerm.length > 0 && !tarotCardSuits[suit].cards[cardIndex].name.toLowerCase().includes(currentSearchTerm)) {
+        if ((currentCardsOnly && !currentCards.includes(tarotCardSuits[suit].cards[cardIndex].name.toLowerCase())) || currentSearchTerm != null && currentSearchTerm.length > 0 && !tarotCardSuits[suit].cards[cardIndex].name.toLowerCase().includes(currentSearchTerm)) {
+            if (currentCardsOnly) {
+                console.log("Skipping card ", tarotCardSuits[suit].cards[cardIndex].name, " because it is not in our current hand.");
+            }
+            
             continue; // Skip this card if it does not match the search term
         }
 
