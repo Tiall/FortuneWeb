@@ -23,10 +23,13 @@
         <button type="button" onclick="toggleLogForm()">Toggle Log Entry Form</button>
         &emsp;
         <button type="button" onclick="importLogs()">Import Logs</button>
-        <button type="button" onclick="exportLogs()">Export Logs</button>
+        <button type="button" onclick="exportLogEntries()">Export Logs</button>
     </div>
-    <form id="logEntryForm" style="display: none;">
+    <form onsubmit="submitLogEntry()" id="logEntryForm" style="display: none;">
         <br />
+        <label for="logTitleInput">Log Title:</label><br />
+        <input type="text" id="logTitleInput" name="logTitleInput" placeholder="Add Title here..." autocomplete="off"><br /><br />
+
         <label for="logDateInput">Date:</label><br />
         <input type="datetime-local" id="logDateInput" name="logDateInput"><br /><br />
         
@@ -34,33 +37,32 @@
         <ul id="logCardListData" style="list-style: none; padding-left: 0.5rem;">
 
         </ul>
-        <input type="text" id="logCardsInput" name="logCardsInput" placeholder="The Fool, or The Sun, etc.." autocomplete="off">
-        <input type="button" onclick="addCardToLog()" value="+">
+        <input type="text" onkeyup="handleSuggestionSearchInput()" id="logCardsInput" name="logCardsInput" placeholder="Search a card to add..." autocomplete="off">
         &emsp;
         <input type="button" onclick="addCurrentCardsToLog()" value="Add Current Cards">
+        <ul id="logCardSearchResults" style="list-style: none; padding-left: 0.5rem;">
+
+        </ul>
         <br /><br />
 
         <label for="logInterpretationInput">Interpretation:</label><br />
         <textarea id="logInterpretationInput" name="logInterpretationInput" rows="4" cols="50" placeholder="Enter your interpretation here..."></textarea><br />
-        <button type="button" onclick="submitLogEntry()">Submit Log Entry</button>
+        <button type="submit">Submit Log Entry</button>
     </form>
     <br /><br />
 
     <template>
         <div class="logEntry">
             <button style="float: right;" type="button" onclick="deleteLogEntry(this)">Delete Log</button>
-            <h2 class="logDate">Date</h2>
+            <h1 class="logTitle">Title</h1>
+            <h2 class="logDate subheading">Date</h2>
             <p class="logCards"><b>Cards:</b> <span class="logCardList"></span></p>
             <p class="logInterpretation"><b>Interpretation:</b> <span class="logInterpretationText"></span></p>
         </div>
     </template>
 
     <div id="logEntriesContainer">
-        <div class="logEntry">
-            <h2 class="logDate">Date</h2>
-            <p class="logCards"><b>Cards:</b><span class="logCardList"></span></p>
-            <p class="logInterpretation"><b>Interpretation:</b> <span class="logInterpretationText"></span></p>
-        </div>
+
     </div>
 </body>
 </html>

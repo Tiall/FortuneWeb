@@ -152,12 +152,14 @@ function toggleLogForm() {
 
 // Handles the submission of the log entry form, creating a log entry object and saving it to the database
 function submitLogEntry() {
+    const titleInput = document.getElementById("logTitleInput");
     const dateInput = document.getElementById("logDateInput");
     const cardsInput = document.querySelectorAll("#logCardListData li");
     let cards = Array.from(cardsInput).map(li => li.getAttribute("data-card"));
     const interpretationInput = document.getElementById("logInterpretationInput");
 
     const logEntry = {
+        title: titleInput.value,
         date: dateInput.value,
         cards: cards,
         interpretation: interpretationInput.value
@@ -177,68 +179,191 @@ function saveLogEntry(logEntry) {
 function renderLogEntries() {
     const transaction = logDb.transaction("logs", "readonly");
     const logStore = transaction.objectStore("logs");
-    const getAllRequest = logStore.getAll();
-    getAllRequest.onsuccess = function () {
-        const logEntries = getAllRequest.result;
-        const logEntriesContainer = document.getElementById("logEntriesContainer");
-        logEntriesContainer.innerHTML = ""; // Clear existing entries
+    const openCursorRequest = logStore.openCursor();
+
+    // Get the container element where log entries will be displayed
+    const logEntriesContainer = document.getElementById("logEntriesContainer");
+
+    // Clear existing entries before rendering new ones to avoid duplicates
+    logEntriesContainer.innerHTML = "";
+
+    openCursorRequest.onsuccess = (event) => {
+        // Get the template element for log entries
         let temp = document.getElementsByTagName("template")[0];
-        logEntries.forEach(entry => {
+        
+        // Use the cursor to iterate through all log entries in the database
+        const cursor = event.target.result;
+        if (cursor) {
+            // Get the log entry data from the cursor
+            const entryValue = cursor.value;
+
+            // Clone the template content
             const entryElement = temp.content.cloneNode(true);
+
+            // Store the entry ID in the div for later reference (e.g., deletion)
+            let logEntryDiv = entryElement.querySelector(".logEntry");
+            logEntryDiv.dataset.key = cursor.key; // Store the entry ID in a data attribute for later reference (e.g., deletion)
+
+            let titleHeader = entryElement.querySelector(".logTitle");
+            titleHeader.textContent = entryValue.title;
+
+            // Populate the cloned template with the log entry data
             let dateHeader = entryElement.querySelector(".logDate");
-            dateHeader.textContent = new Date(entry.date).toLocaleString();
-            dateHeader.dataset.date = entry.date;
-            
+            dateHeader.textContent = new Date(entryValue.date).toLocaleString();
+            dateHeader.dataset.date = entryValue.date;
+
             let cardList = entryElement.querySelector(".logCardList");
-            cardList.textContent = entry.cards.join(", ");
-            cardList.dataset.cards = entry.cards.join(", ");
+            cardList.textContent = entryValue.cards.join(", ");
+            cardList.dataset.cards = entryValue.cards.join(", ");
 
             let interpretationText = entryElement.querySelector(".logInterpretationText");
-            interpretationText.textContent = entry.interpretation;
-            interpretationText.dataset.interpretation = entry.interpretation;
+            interpretationText.textContent = entryValue.interpretation;
+            interpretationText.dataset.interpretation = entryValue.interpretation;
+
+            // Append the populated template to the container element
             logEntriesContainer.appendChild(entryElement);
-        });
+
+            console.log("Rendered log entry with ID: ", cursor.key, " and value: ", entryValue);
+
+            // Move to the next entry
+            cursor.continue();
+        }
+        else {
+            console.log("All log entries rendered.");
+        }
     };
 }
 
 function deleteLogEntry(button) {
     const logEntryElement = button.parentElement;
-    const date = logEntryElement.querySelector(".logDate").dataset.date;
-    const interpretation = logEntryElement.querySelector(".logInterpretationText").dataset.interpretation;
+    console.log(logEntryElement);
+    // const date = logEntryElement.querySelector(".logDate").dataset.date;
+    // const interpretation = logEntryElement.querySelector(".logInterpretationText").dataset.interpretation;
 
     const transaction = logDb.transaction("logs", "readwrite");
     const logStore = transaction.objectStore("logs");
-    const request = logStore.openCursor();
+    const request = logStore.delete(Number(logEntryElement.dataset.key)); // Use the stored entry ID to delete the correct entry
 
-    request.onsuccess = (event) => {
-        const cursor = event.target.result;
-        if (cursor) {
-            // Check the data inside the object
-            if (cursor.value.date === date && cursor.value.interpretation === interpretation) {
-                cursor.delete(); // Deletes the current entry the cursor is on
-                console.log("Deleted matching entry.");
-                return; // Stop if you only want to delete one
-            }
-            cursor.continue(); // Move to the next entry
-        }
+    request.onsuccess = () => {
+        console.log(`Deleted matching entry ${logEntryElement.dataset.key}.`);
     };
 
     renderLogEntries();
 }
 
 async function addCurrentCardsToLog() {
+    addCardsToLog(await getCurrentCards());
+}
+function addCardsToLog(cards) {
     const cardsList = document.getElementById("logCardListData");
-    const currentCards = await getCurrentCards();
-
-    cardsList.innerHTML = currentCards.map(card => `<li data-card="${card}"><button type="button" onclick="removeCardFromLog(this)">×</button>&emsp;${card}</li>`).join("");
+    cardsList.innerHTML += cards.map(card => `<li data-card="${card}"><button type="button" onclick="removeCardFromLog(this)">×</button>&emsp;${card}</li>`).join("");
 }
 async function getCurrentCards() {
     const cards = await getAllCardsInDB();
 
-    return Object.values(cards).map(card => card.name);
+    return Object.values(cards).map(card => card.name+(card.isReversed ? " (R)" : ""));
 }
 
 function removeCardFromLog(button) {
     const li = button.parentElement;
     li.remove();
+}
+
+function exportLogEntries() {
+    const transaction = logDb.transaction("logs", "readonly");
+    const logStore = transaction.objectStore("logs");
+    const openCursorRequest = logStore.openCursor();
+    const logEntries = {logs: []};
+
+    openCursorRequest.onsuccess = (event) => {
+        const cursor = event.target.result;
+        if (cursor) {
+            logEntries.logs.push(cursor.value);
+            cursor.continue();
+        }
+        else {
+            console.log("All log entries retrieved for export: ", logEntries);
+            if (logEntries.logs.length === 0) {
+                alert("No log entries to export.");
+                return;
+            }
+            downloadJSON(logEntries);
+        }
+    };
+        openCursorRequest.onerror = (event) => {
+            console.error("Error retrieving log entries for export: ", event.target.error);
+            alert("An error occurred while exporting log entries. Please try again.");
+        };
+}
+
+function downloadJSON(data, filename = 'logEntries.json') {
+    // 1. Convert the object to a formatted JSON string
+    const jsonString = JSON.stringify(data, null, 2);
+
+    // 2. Create a Blob with the JSON data
+    const blob = new Blob([jsonString], { type: 'application/json' });
+
+    // 3. Create a temporary anchor element
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+
+    // 4. Trigger the download and clean up
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+}
+
+function importLogs() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.json';
+    fileInput.onchange = (event) => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const data = JSON.parse(e.target.result);
+            // Process the imported log entries
+            if (data.logs && Array.isArray(data.logs)) {
+                data.logs.forEach(logEntry => {
+                    saveLogEntry(logEntry);
+                });
+                alert(`Successfully imported ${data.logs.length} log entries.`);
+            } else {
+                alert("Invalid log file format. Please ensure the JSON file has a 'logs' array.");
+            }
+        };
+        reader.readAsText(file);
+    };
+    fileInput.click();
+
+    // Clean up the file input element after use
+    fileInput.remove();
+}
+
+function handleSuggestionSearchInput() {
+    displayCardSearchResults(searchCardsForLog());
+}
+
+function searchCardsForLog() {
+    const searchTerm = document.getElementById("logCardsInput").value.toLowerCase();
+    const cardsList = tarotCardSuits.flatMap(suit => suit.cards);
+    const matchingCards = Object.values(cardsList).filter(card => card.name.toLowerCase().includes(searchTerm));
+    return matchingCards;
+}
+
+function displayCardSearchResults(cards) {
+    // Get the container element for search results
+    const searchResultsContainer = document.getElementById("logCardSearchResults");
+
+    // Clear previous search results
+    searchResultsContainer.innerHTML = "";
+
+    // Display new search results as a list of buttons
+    searchResultsContainer.innerHTML = cards.map(card => `<li data-card="${card.name}"><button type="button" onclick="handleAddCardToLog(this, false)">U</button><button type="button" onclick="handleAddCardToLog(this, true)">R</button>&emsp;${card.name}</li>`).join("");
+}
+function handleAddCardToLog(button, isReversed) {
+    const cardName = button.parentElement.dataset.card+(isReversed ? " (R)" : "");
+    addCardsToLog([cardName]);
 }

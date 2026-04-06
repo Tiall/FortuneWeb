@@ -123,3 +123,12 @@ button {
 #logEntryForm {
     margin-left: 1rem;
 }
+
+.logTitle {
+    margin-bottom: 0;
+}
+
+.subheading {
+    margin-top: 0;
+    color: #bbbbbb;
+}
