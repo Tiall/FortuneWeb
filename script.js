@@ -651,17 +651,23 @@ async function drawCard(card, key) {
     let cardBase = clon.querySelector(".tarotCard");
 
     if (card.isFlipped) {
-        // Show the text boxes
-        cardNumBox.style.display = 'block';
-        cardDescBox.style.display = 'block';
-        cardNameBox.style.display = 'block';
+        cardBase.classList.add("flipped");
 
         // Set the tarot card graphic's textboxes with the data provided
         cardNumBox.innerHTML = card.number;
         cardDescBox.innerHTML = card.meaning;
         cardNameBox.innerHTML = card.name + (card.isReversed ? " (R)" : "");
+        if (card.isReversed) {
+            cardBase.classList.add("reversed");
+        }
+        else {
+            cardBase.classList.remove("reversed");
+        }
+
+        cardBase.style.setProperty('--url', `url('images/cards/${getSuitCharFromSuit(card.name)}_${card.number}.png')`);
     }
     else {
+        cardBase.classList.remove("flipped");
         // Get the data from the randomly drawn tarot card into their respective places
         cardNumBox.style.display = 'none';
         cardDescBox.style.display = 'none';
@@ -690,6 +696,23 @@ async function drawCard(card, key) {
     clon.querySelector(".tarotCard").setAttribute('card-id', key);
     clon.querySelector(".tarotCard").style.visibility = 'hidden';
     document.getElementById("playMat").appendChild(clon);
+}
+function getSuitCharFromSuit(cardName) {
+    if (cardName.includes("Wands")) {
+        return "W";
+    }
+    else if (cardName.includes("Cups")) {
+        return "C";
+    }
+    else if (cardName.includes("Swords")) {
+        return "S";
+    }
+    else if (cardName.includes("Pentacles")) {
+        return "P";
+    }
+    else {
+        return "M"; // Major Arcana
+    }
 }
 
 // Removes all rendered cards that are on the screen
