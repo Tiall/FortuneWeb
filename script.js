@@ -680,7 +680,7 @@ async function drawCard(card, key) {
     if (document.getElementById("playMat").classList.contains("gridMode")) {
         cardBase.float = 'none'; // If we are in grid mode, remove float
         cardBase.draggable = false; // If we are in grid mode, remove draggable
-        cardBase.style.position = 'unset';
+        cardBase.style.position = 'relative';
     }
     else {
         cardBase.float = 'left'; // If we are not in grid mode, set float to left
@@ -725,6 +725,7 @@ function removeRenderedCards() {
 }
 
 // This function spreads out recently spawned in cards so that they are not stacked
+// Doesn't really work that well but it is better than nothing, and it also fixes the card shadows and shrinks the text if it is too big
 async function fixNewRenderedCards() {
     let cards = document.querySelectorAll('.tarotCard');
 
@@ -733,7 +734,7 @@ async function fixNewRenderedCards() {
 
         if (document.getElementById("playMat").classList.contains("gridMode")) {
             // If we are in grid mode, we don't need to position the cards
-            card.style.position = 'unset';
+            card.style.position = 'relative';
             card.style.visibility = 'visible';
 
             shrinkText(card.querySelector(".cardName"));
